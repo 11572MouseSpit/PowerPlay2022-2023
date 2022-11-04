@@ -20,6 +20,9 @@ public class HWProfile {
     public BNO055IMU imu = null;
     public Servo servoGrabber = null;
 
+    public final double DRIVE_TICKS_PER_INCH = 30;      //temporary values => To be updated
+    public final double USD_COUNTS_PER_INCH = 30;      //temporary values => To be updated
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
