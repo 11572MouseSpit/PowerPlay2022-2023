@@ -52,9 +52,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto: Blue Corner", group = "Concept")
+@Autonomous(name = "Auto: Red Corner", group = "Concept")
 
-public class AutoBlueCorner extends LinearOpMode {
+public class AutoRedCorner extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -189,7 +189,7 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case SCORE_CORNER:
 //                    drive.driveDistance(0.25, 180, 2);
-                    drive.driveDistance(0.25, 90,25);
+                    drive.driveSimpleDistance(0.25, -90,25);
 
 
                     autoState = State.PARK;
@@ -197,13 +197,13 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case PARK:
 
-                    if(position == 3) {
+                    if(position == 1) {
                         // drive forward to park position 1
-                        drive.driveDistance(0.25, 0,25);
+                        drive.driveDistance(0.25, 0,22);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.driveSimpleDistance(0.25, -90,25);
+                        drive.driveSimpleDistance(0.25, 90,22);
 
                         // drive to park position 2
                         drive.driveDistance(0.25, 0, 25);
@@ -211,7 +211,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     } else {
                         // drive to park position 3
                         // return to starting position
-                        drive.driveDistance(0.25, -90,50);
+                        drive.driveSimpleDistance(0.25, 90,50);
                         drive.driveDistance(0.25, 0, 25);
                     }
 
