@@ -75,13 +75,17 @@ public class MecanumTeleOp extends LinearOpMode {
             }   // end if (gamepad1.x && ...)
 
             if(gamepad1.right_trigger>0.1){
-                robot.motorLift.setPower(gamepad1.right_trigger);
+                robot.motorLeftLift.setPower(gamepad1.right_trigger * .1);
+                robot.motorRightLift.setPower(gamepad1.right_trigger);
             } else if (gamepad1.left_trigger >0.1) {
-                robot.motorLift.setPower(-gamepad1.left_trigger);
-            } else robot.motorLift.setPower(0);
-
+                robot.motorLeftLift.setPower(-gamepad1.left_trigger);
+                robot.motorRightLift.setPower(-gamepad1.left_trigger);
+            } else {
+                robot.motorLeftLift.setPower(0);
+                robot.motorRightLift.setPower(0);
+            }
             if(gamepad1.a){
-                robot.servoGrabber.setPosition(0.6);
+                robot.servoGrabber.setPosition(0.7);
             }
             if(gamepad1.b) {
                 robot.servoGrabber.setPosition(0.9);

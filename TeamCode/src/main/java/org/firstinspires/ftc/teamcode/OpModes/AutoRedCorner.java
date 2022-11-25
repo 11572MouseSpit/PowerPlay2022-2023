@@ -99,7 +99,7 @@ public class AutoRedCorner extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-    double position = 3;
+    double position = 2;
     private final static HWProfile robot = new HWProfile();
     private LinearOpMode opMode = this;
 
@@ -164,9 +164,9 @@ public class AutoRedCorner extends LinearOpMode {
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         if(recognition.getLabel() == "1 Bolt"){
                             position =1;
-                        } else if(recognition.getLabel() == "2 Bulb" ){
-                            position = 2;
-                        } else position = 3;
+                        } else if(recognition.getLabel() == "3 Panel" ){
+                            position = 3;
+                        } else position = 2;
                     }
                     telemetry.update();
                 }
@@ -189,30 +189,33 @@ public class AutoRedCorner extends LinearOpMode {
 
                 case SCORE_CORNER:
 //                    drive.driveDistance(0.25, 180, 2);
-                    drive.driveSimpleDistance(0.25, -90,25);
+                    drive.robotCorrect2(0.25, 90,.75);
+                  //  drive.PIDRotate(0,2);
+                  //  drive.PIDRotate(0,2);
+                   // drive.robotCorrect2(0.25, 0,.25);
 
 
-                    autoState = State.PARK;
+                    autoState = State.HALT;
                     break;
 
                 case PARK:
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.driveDistance(0.25, 0,22);
+                        drive.robotCorrect2(0.2, 180,1.1);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.driveSimpleDistance(0.25, 90,22);
+                        drive.robotCorrect2(0.25, -90,.75);
 
                         // drive to park position 2
-                        drive.driveDistance(0.25, 0, 25);
+                        drive.robotCorrect2(0.25, 180, 1.1);
 //                        drive.driveDistance(0.25, 180,3);
                     } else {
                         // drive to park position 3
                         // return to starting position
-                        drive.driveSimpleDistance(0.25, 90,50);
-                        drive.driveDistance(0.25, 0, 25);
+                        drive.robotCorrect2(0.25, -90,1.2);
+                        drive.robotCorrect2(0.25, 180, 1);
                     }
 
                         autoState = State.HALT;
