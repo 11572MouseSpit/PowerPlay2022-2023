@@ -74,7 +74,8 @@ public class BrokenBot extends LinearOpMode {
 
 
             // Provide user feedback
-            telemetry.addData("lift position:", robot.motorLift.getCurrentPosition());
+            telemetry.addData("lift position:", robot.motorLeftLift.getCurrentPosition());
+            telemetry.addData("lift position:", robot.motorRightLift.getCurrentPosition());
             telemetry.addData("MotorLF:", robot.motorLR.getCurrentPosition());
             telemetry.addData("MotorLF:", robot.motorLF.getCurrentPosition());
             telemetry.addData("MotorRF:", robot.motorRF.getCurrentPosition());
