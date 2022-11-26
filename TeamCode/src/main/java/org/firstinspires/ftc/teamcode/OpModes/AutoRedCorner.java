@@ -180,16 +180,80 @@ public class AutoRedCorner extends LinearOpMode {
 
             switch (autoState) {
                 case TEST:
+                    drive.liftHigh();
+                    sleep(3000);
+                    //                    drive.driveDistance(.5, -90, 20);
+                    autoState = State.HALT;
 
                     break;
 
                 case DETECT_CONE:
-                    autoState = State.SCORE_CORNER;
+                    autoState = State.SCORE_LOW_JUNCTION;
+                    break;
+
+                case SCORE_LOW_JUNCTION:
+                    drive.driveDistance(0.5, 90, 11);
+                    drive.driveDistance(0.5, 0, 4);
+                    drive.liftLow();
+                    sleep(1000);
+                    drive.resetLift();
+                    sleep(1000);
+
+                    drive.driveDistance(0.5, 180, 4);
+
+                    drive.driveDistance(0.5, -90, 12);
+
+                    drive.PIDRotate(0, 1);
+                    autoState = State.FIRST_CONE_STACK;
+
+                    break;
+
+                case FIRST_CONE_STACK:
+                    drive.driveDistance(0.5, 0, 67);
+
+                    drive.driveDistance(0.5, 180, 10);
+
+                    drive.PIDRotate(-90, 2);
+
+                    drive.openClaw();
+
+                    drive.liftPosition(100);
+
+                    drive.driveDistance(0.5, 0, 25);
+
+
+                    drive.closeClaw();
+                    sleep(1000);
+
+                    drive.liftPosition(150);
+                    sleep(500);
+
+                    autoState = State.SCORE_LOW_JUNCTION2;
+                    break;
+
+                case SCORE_LOW_JUNCTION2:
+                    drive.driveDistance(0.5, 180, 25);
+
+                    drive.driveDistance(0.5, -90, 12);
+
+                    drive.liftLow();
+                    sleep(500);
+
+                    drive.driveDistance(0.3, 0, 4);
+
+                    drive.resetLift();
+                    sleep(300);
+
+                    drive.driveDistance(0.3, 180, 4);
+
+                    drive.driveDistance(0.5, 90, 12);
+
+                    autoState = State.PARK;
                     break;
 
                 case SCORE_CORNER:
 //                    drive.driveDistance(0.25, 180, 2);
-                    drive.robotCorrect2(0.25, 90,.75);
+                    drive.driveByTime(0.25, 90,.75);
                   //  drive.PIDRotate(0,2);
                   //  drive.PIDRotate(0,2);
                    // drive.robotCorrect2(0.25, 0,.25);
@@ -202,20 +266,19 @@ public class AutoRedCorner extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.robotCorrect2(0.2, 180,1.1);
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.3, 0,26);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.robotCorrect2(0.25, -90,.75);
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.25, 0,0);
 
-                        // drive to park position 2
-                        drive.robotCorrect2(0.25, 180, 1.1);
-//                        drive.driveDistance(0.25, 180,3);
                     } else {
                         // drive to park position 3
-                        // return to starting position
-                        drive.robotCorrect2(0.25, -90,1.2);
-                        drive.robotCorrect2(0.25, 180, 1);
+                        // drive to park position 2
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.3, 180, 24);
                     }
 
                         autoState = State.HALT;
@@ -255,7 +318,7 @@ public class AutoRedCorner extends LinearOpMode {
     }
 
     enum State {
-        TEST, DETECT_CONE, SCORE_CORNER, PARK, HALT;
+        TEST, DETECT_CONE, SCORE_LOW_JUNCTION, SCORE_LOW_JUNCTION2, FIRST_CONE_STACK, SCORE_CORNER, PARK, HALT;
     }   // end of enum State
 
     /**

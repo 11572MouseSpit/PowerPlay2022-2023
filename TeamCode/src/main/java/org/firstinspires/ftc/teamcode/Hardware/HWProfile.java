@@ -22,8 +22,12 @@ public class HWProfile {
     public BNO055IMU imu = null;
     public Servo servoGrabber = null;
 
-    public final double DRIVE_TICKS_PER_INCH = 42;      //temporary values => To be updated
-    public final double USD_COUNTS_PER_INCH = 30;      //temporary values => To be updated
+    public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
+    public final int LOW_JUNCTION_POSITION = 300;
+    public final int MID_JUNCTION_POSITION = 450;
+    public final int MAX_LIFT_POSITION = 670;
+
+    public final double STRAFE_FACTOR = 1.1;
 
 
     /* local OpMode members. */
@@ -44,37 +48,57 @@ public class HWProfile {
 
         // Define and Initialize Motors
         motorLF = hwMap.get(DcMotor.class, "motorLF");
-        motorLR = hwMap.get(DcMotor.class, "motorLR");
-        motorRF = hwMap.get(DcMotor.class, "motorRF");
-        motorRR = hwMap.get(DcMotor.class, "motorRR");
-        motorLeftLift = hwMap.get(DcMotor.class, "motorLeftLift");
-        motorRightLift = hwMap.get(DcMotor.class, "motorRightLift");
-        motorLF.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorLR.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        motorLeftLift.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRF.setDirection(DcMotor.Direction.FORWARD);
-        motorRR.setDirection(DcMotor.Direction.FORWARD);
+        motorLF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLF.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLF.setPower(0);
+
+
+        motorLR = hwMap.get(DcMotor.class, "motorLR");
+        motorLR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLR.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         motorLR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLR.setPower(0);
+
+
+        motorRF = hwMap.get(DcMotor.class, "motorRF");
+        motorRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRF.setDirection(DcMotor.Direction.REVERSE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setPower(0);
+
+
+        motorRR = hwMap.get(DcMotor.class, "motorRR");
+        motorRR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRR.setDirection(DcMotor.Direction.REVERSE);
+        motorRR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRR.setPower(0);
 
-        // Set all motors to zero power
-        motorLF.setPower(0);
-        motorLR.setPower(0);
-        motorRF.setPower(0);
-        motorRR.setPower(0);
+
+        motorLeftLift = hwMap.get(DcMotor.class, "motorLeftLift");
+        motorLeftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftLift.setTargetPosition(0);
+        motorLeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLeftLift.setPower(0);
+
+
+        motorRightLift = hwMap.get(DcMotor.class, "motorRightLift");
+        motorRightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightLift.setTargetPosition(0);
+        motorRightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRightLift.setPower(0);
+
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        motorLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
 

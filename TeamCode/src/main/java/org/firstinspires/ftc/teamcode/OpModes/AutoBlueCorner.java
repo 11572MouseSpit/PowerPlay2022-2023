@@ -189,7 +189,7 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case SCORE_CORNER:
 //                    drive.driveDistance(0.25, 180, 2);
-                    drive.robotCorrect2(0.25, -90,.75);
+                    drive.driveByTime(0.25, -90,.75);
 
 
                     autoState = State.HALT;
