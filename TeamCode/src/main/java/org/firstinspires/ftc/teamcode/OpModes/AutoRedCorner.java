@@ -192,27 +192,41 @@ public class AutoRedCorner extends LinearOpMode {
                     break;
 
                 case SCORE_LOW_JUNCTION:
+                    // strafe over to scoring position
                     drive.driveDistance(0.5, 90, 11);
+
+                    // drive forward to place the cone
                     drive.driveDistance(0.5, 0, 4);
+
+                    // raise the lift to place the cone
                     drive.liftLow();
                     sleep(1000);
+
+                    // Lower the lift to place the cone
                     drive.resetLift();
                     sleep(1000);
+                    drive.openClaw();
 
+                    // back away from the junction
                     drive.driveDistance(0.5, 180, 4);
 
+                    //strafe back to starting position
                     drive.driveDistance(0.5, -90, 12);
 
+                    // realign towards the signal cone
                     drive.PIDRotate(0, 1);
                     autoState = State.FIRST_CONE_STACK;
 
                     break;
 
                 case FIRST_CONE_STACK:
+                    // push the signal cone out of the way
                     drive.driveDistance(0.5, 0, 67);
 
+                    // back into position to pick up the second cone
                     drive.driveDistance(0.5, 180, 10);
 
+                    // turn towards the stack of cones
                     drive.PIDRotate(-90, 2);
 
                     drive.openClaw();
