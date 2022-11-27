@@ -38,7 +38,7 @@ public class DriveClass {
      * @param heading
      * @param duration
      */
-    public void driveByTime(double power, double heading, double duration) {
+    public void robotCorrect2(double power, double heading, double duration) {
         String action = "Initializing";
         double initZ = getZAngle();
         double currentZ = 0;
@@ -104,6 +104,38 @@ public class DriveClass {
         motorsHalt();
     }   // close robotCorrect method
 
+    public void liftRaise(int position){
+        robot.motorLift.setTargetPosition(position);
+        robot.motorLift.setPower((1));
+    }
+
+    public void liftReset(){
+        robot.motorLift.setTargetPosition(0);
+        robot.motorLift.setPower((0.5));
+    }
+
+    public void liftLowerJunction(){
+        robot.motorLift.setTargetPosition(robot.JUNCTION_LOWER);
+        robot.motorLift.setPower(1);
+    }
+
+    public void liftMidJunction(){
+        robot.motorLift.setTargetPosition(robot.JUNCTION_MID);
+        robot.motorLift.setPower(1);
+    }
+
+    public void liftHighJunction(){
+        robot.motorLift.setTargetPosition(robot.JUNCTION_HIGH);
+        robot.motorLift.setPower(1);
+    }
+
+    public void openClaw(){
+        robot.servoGrabber.setPosition(robot.clawOpen);
+    }
+
+    public void closeClaw(){
+        robot.servoGrabber.setPosition(robot.clawClosed);
+    }
     /**
      *  Method: driveDistance
      *  -   uses the encoder values to determine distance traveled.
@@ -120,7 +152,6 @@ public class DriveClass {
         double currentZ = 0;
         double zCorrection = 0;
         boolean active = true;
-        double strafeFactor = 1;
 
         double theta = Math.toRadians(90 + heading);
         double lfStart = 0;
@@ -133,16 +164,12 @@ public class DriveClass {
         rfStart = robot.motorRF.getCurrentPosition();
         rrStart = robot.motorRR.getCurrentPosition();
 
-        if (heading == 90 || heading == -90){
-            strafeFactor = robot.STRAFE_FACTOR;
-        }
-
         while(opMode.opModeIsActive() && active) {
 
-            RF = power * (Math.sin(theta) + Math.cos(theta));
-            LF = power * (Math.sin(theta) - Math.cos(theta));
-            LR = power * (Math.sin(theta) + Math.cos(theta));
-            RR = power * (Math.sin(theta) - Math.cos(theta));
+            RF = power * (Math.sin(theta) - Math.cos(theta));
+            LF = power * (Math.sin(theta) + Math.cos(theta));
+            LR = power * (Math.sin(theta) - Math.cos(theta));
+            RR = power * (Math.sin(theta) + Math.cos(theta));
 
             if (initZ > 170 || initZ < -170){
                 currentZ = gyro360(0);      // always use 0 as the reference angle
@@ -153,38 +180,39 @@ public class DriveClass {
                 zCorrection = Math.abs(initZ - currentZ)/100;
 
                 if (initZ < currentZ) {
-                    RF = RF + zCorrection;
-                    RR = RR + zCorrection;
-                    LF = LF - zCorrection;
-                    LR = LR - zCorrection;
-                }
-                if (initZ > currentZ) {
                     RF = RF - zCorrection;
                     RR = RR - zCorrection;
                     LF = LF + zCorrection;
                     LR = LR + zCorrection;
+                }
+                if (initZ > currentZ) {
+                    RF = RF + zCorrection;
+                    RR = RR + zCorrection;
+                    LF = LF - zCorrection;
+                    LR = LR - zCorrection;
                 }
             }   // end of if currentZ != initZ
 
             /*
              * Limit that value of the drive motors so that the power does not exceed 100%
              */
-            RF = Range.clip(RF, -1,1);
-            LF = Range.clip(LF, -1,1);
-            RR = Range.clip(RR, -1,1);
-            LR = Range.clip(LR, -1,1);
+            RF = Range.clip(RF, -power,power);
+            LF = Range.clip(LF, -power,power);
+            RR = Range.clip(RR, -power,power);
+            LR = Range.clip(LR, -power,power);
 
             /*
              * Apply power to the drive wheels
              */
             setDrivePower(RF, LF, LR, RR);
+
             opMode.telemetry.addData("LF Start = ", lfStart);
             opMode.telemetry.addData("Distance = ", distance);
             opMode.telemetry.addData("Heading = ", heading);
             opMode.telemetry.addData("Calculated Distance = ", calcDistance(heading, rfStart, rrStart, lfStart, lrStart));
             opMode.telemetry.update();
 
-            if(calcDistance(heading, rfStart, rrStart, lfStart, lrStart) >= (distance * strafeFactor)) active = false;
+            if(calcDistance(heading, rfStart, rrStart, lfStart, lrStart) >= distance) active = false;
             opMode.idle();
 
         }   // end of while loop
@@ -235,10 +263,10 @@ public class DriveClass {
                     rotationSpeed = 0.21;
                 }
 
-                RF = rotationSpeed;
-                LF = -rotationSpeed;
-                LR = -rotationSpeed;
-                RR = rotationSpeed;
+                RF = -rotationSpeed;
+                LF = rotationSpeed;
+                LR = rotationSpeed;
+                RR = -rotationSpeed;
 
                 setDrivePower(RF, LF, LR, RR);
 
@@ -312,49 +340,6 @@ public class DriveClass {
 
         return rotationalAngle;
     }   // end method gyro360
-
-    public void liftHigh(){
-        robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
-
-    }
-
-    public void closeClaw(){
-
-    }
-
-    public void openClaw(){
-
-    }
-    public void liftPosition(int liftPosition){
-        robot.motorRightLift.setTargetPosition(liftPosition);
-        robot.motorLeftLift.setTargetPosition(liftPosition);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
-    }
-
-    public void liftMid(){
-        robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
-    }
-
-    public void liftLow(){
-        robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
-    }
-
-    public void resetLift(){
-        robot.motorRightLift.setTargetPosition(0);
-        robot.motorLeftLift.setTargetPosition(0);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
-    }
 
     /**
      *  Method: driveSimpleDistance
@@ -495,6 +480,7 @@ public class DriveClass {
      */
     public double calcDistance(double heading, double rfStart, double rrStart, double lfStart, double lrStart){
 
+        double strafeFactor = 1;
         double distanceTraveled = 0;
         double rfEncoder = 0;
         double lfEncoder = 0;
@@ -506,17 +492,28 @@ public class DriveClass {
         rrEncoder = robot.motorRR.getCurrentPosition();
         lrEncoder = robot.motorLR.getCurrentPosition();
 
-        if((heading == 0) || (heading == 180) || (heading == 90) || (heading == -90)) {
-            distanceTraveled = ((Math.abs(rfStart - rfEncoder) + Math.abs(lfStart - lfEncoder)
-                    + Math.abs(rrStart-rrEncoder) + Math.abs(lrStart - lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
-        }
-
         if ((heading == 90) || (heading == -90)){
-            distanceTraveled = ((Math.abs(rfStart - rfEncoder) + Math.abs(lfStart - lfEncoder)
-                    + Math.abs(rrStart-rrEncoder) + Math.abs(lrStart - lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
+            strafeFactor = robot.STRAFE_FACTOR;
         }
 
-        return Math.abs(distanceTraveled);
+        distanceTraveled = ((Math.abs(rfStart - rfEncoder) + Math.abs(lfStart - lfEncoder)
+                + Math.abs(rrStart - rrEncoder) + Math.abs(lrStart - lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
+
+        return Math.abs(distanceTraveled * strafeFactor);
     }
+
+    /**
+     * Method convertToInches
+     *  -   Converts the measured encoder values to inches
+     *      Assumes drive motors only
+     * @param convValue
+     * @return
+     */
+    private double convertToInches(double convValue){
+
+        return (convValue / robot.USD_COUNTS_PER_INCH);
+
+    }   // end of returnInches method
+
 
 }   // close the driveMecanum class

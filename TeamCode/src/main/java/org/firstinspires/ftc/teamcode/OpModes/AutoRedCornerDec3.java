@@ -52,9 +52,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto: Blue Corner", group = "Concept")
+@Autonomous(name = "Auto: Red Corner - Dec 3rd", group = "Concept")
 
-public class AutoBlueCorner extends LinearOpMode {
+public class AutoRedCornerDec3 extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -139,7 +139,9 @@ public class AutoBlueCorner extends LinearOpMode {
 
         /** Wait for the game to begin */
 
-        robot.servoGrabber.setPosition(robot.clawClosed);
+
+        drive.closeClaw();
+        //robot.servoGrabber.setPosition(robot.clawClosed);
 
 
         telemetry.addData(">", "Press Play to start op mode");
@@ -187,14 +189,141 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case DETECT_CONE:
-                    autoState = State.SCORE_CORNER;
+                    autoState = State.SCORE_LOW;
+                    break;
+
+                case SCORE_LOW:
+                    drive.liftLowerJunction();
+                    drive.driveDistance(0.3, 90, 11);
+
+                    drive.PIDRotate(0, 2);
+
+                    // drove towards the junction
+                    drive.driveDistance(0.3, 0, 5);
+
+//                    sleep(500);
+                    drive.liftReset();
+
+                    sleep(300);
+                    drive.openClaw();
+
+                    // drove towards the junction
+                    drive.driveDistance(0.3, 180, 4);
+
+                    drive.driveDistance(0.3, -90,11);
+
+//                    drive.PIDRotate(0, 2);
+
+                    autoState = State.RETRIEVE_CONE2;
+                    break;
+
+                case RETRIEVE_CONE2:
+                    //                  drive.PIDRotate(0, 2);
+
+                    // push signal cone out of the way
+                    drive.driveDistance(0.3, 0, 75);
+
+                    // back up to turn towards cone stack
+                    drive.driveDistance(0.3, 180, 3);
+
+                    // turn towards cone stack
+                    drive.PIDRotate(-84, 2);
+                    drive.PIDRotate(-88, 2);
+
+                    // raise lift to appropriate height
+                    drive.liftRaise(775);
+
+                    sleep(500);
+
+                    // drive towards cones
+                    drive.driveDistance(0.4, 0, 28);
+
+                    drive.closeClaw();
+                    sleep(500);
+
+                    drive.liftLowerJunction();
+                    sleep(500);
+
+                    drive.driveDistance(0.4, 180, 24);
+
+                    autoState = State.SCORE_JUNCTION2;
+                    break;
+
+                case SCORE_JUNCTION2:
+                    drive.PIDRotate(-90, 2);
+
+                    // strafe towards junction 2
+                    drive.driveDistance(0.3, -90, 13);
+
+                    // drive forward to place the cone
+//                    drive.driveDistance(0.3, 0, 4);
+
+                    // lower the lift
+                    drive.liftRaise(675);
+
+                    // open claw and drive backwards
+                    drive.openClaw();
+                    drive.driveDistance(0.3, 180, 2);
+
+                    // strafe back to starting position
+                    drive.driveDistance(0.3, 90, 11);
+
+                    autoState = State.RETRIEVE_CONE3;
+                    break;
+
+                case RETRIEVE_CONE3:
+                    drive.driveDistance(0.3, 0, 30);
+
+                    drive.closeClaw();
+                    sleep(500);
+
+                    // raise the lift
+                    drive.liftHighJunction();
+                    sleep(300);
+
+                    autoState = State.SCORE_CONE3;
+
+                    break;
+
+                case SCORE_CONE3:
+                    // drive back towards the high goal
+                    drive.driveDistance(0.3, 180, 40);
+
+                    // turn towards the high junction
+                    drive.PIDRotate(0, 2);
+
+                    sleep(500);
+
+                    drive.PIDRotate(0, 2);
+
+                    drive.driveDistance(0.3, 0, 3);
+                    drive.driveDistance(0.3, 180, 2);
+
+                    drive.liftRaise(600);
+                    sleep(1000);
+
+                    drive.openClaw();
+
+
+                    drive.liftHighJunction();
+                    sleep(1000);
+
+                    drive.driveDistance(0.3, 180, 2);
+
+                    drive.PIDRotate(-90, 2);
+                    drive.liftRaise(600);
+                    sleep(500);
+
+                    drive.driveDistance(0.4, 0, 43);
+
+                    autoState = State.HALT;
                     break;
 
                 case SCORE_CORNER:
                     drive.driveDistance(0.25, 180, 2);
-                    drive.PIDRotate(90, 2);
+                    drive.PIDRotate(-90, 2);
                     sleep(500);
-                    drive.PIDRotate(90, 2);
+                    drive.PIDRotate(-90, 2);
                     drive.driveSimpleDistance(0.25, 180,25);
 
                     sleep(1000);
@@ -205,21 +334,21 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case PARK:
 
-                    if(position == 3) {
+                    if(position == 1) {
                         // drive to park position 1
                         drive.driveDistance(0.25, 0,2);
-                        drive.driveDistance(0.25, 90, 30);
+                        drive.driveDistance(0.25, -90, 30);
                         drive.driveDistance(0.25, 180,3);
 
                     } else if (position == 2) {
                         // drive to park position 2
                         drive.driveDistance(0.25, 0, 22);
-                        drive.driveDistance(0.25, 90, 24);
+                        drive.driveDistance(0.25, -90, 24);
 //                        drive.driveDistance(0.25, 180,3);
                     } else {
                         // drive to park position 3
                         drive.driveDistance(0.25, 0, 48);
-                        drive.driveDistance(0.25, 90, 24);
+                        drive.driveDistance(0.25, -90, 24);
                     }
                     drive.PIDRotate(0, 2);
                     sleep(500);
@@ -262,7 +391,7 @@ public class AutoBlueCorner extends LinearOpMode {
     }
 
     enum State {
-        TEST, DETECT_CONE, SCORE_CORNER, PARK, HALT;
+        TEST, DETECT_CONE, SCORE_LOW, RETRIEVE_CONE2, SCORE_JUNCTION2, RETRIEVE_CONE3, SCORE_CONE3, SCORE_CORNER, PARK, HALT;
     }   // end of enum State
 
     /**
@@ -272,7 +401,7 @@ public class AutoBlueCorner extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.60f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
