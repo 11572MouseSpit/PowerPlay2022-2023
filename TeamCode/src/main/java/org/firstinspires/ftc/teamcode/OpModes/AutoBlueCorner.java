@@ -139,9 +139,6 @@ public class AutoBlueCorner extends LinearOpMode {
 
         /** Wait for the game to begin */
 
-        robot.servoGrabber.setPosition(robot.clawClosed);
-
-
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
@@ -191,39 +188,32 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case SCORE_CORNER:
-                    drive.driveDistance(0.25, 180, 2);
-                    drive.PIDRotate(90, 2);
-                    sleep(500);
-                    drive.PIDRotate(90, 2);
-                    drive.driveSimpleDistance(0.25, 180,25);
+//                    drive.driveDistance(0.25, 180, 2);
+                    drive.driveByTime(0.25, -90,.75);
 
-                    sleep(1000);
-                    robot.servoGrabber.setPosition(robot.clawOpen);
 
-                    autoState = State.PARK;
+                    autoState = State.HALT;
                     break;
 
                 case PARK:
 
                     if(position == 3) {
-                        // drive to park position 1
-                        drive.driveDistance(0.25, 0,2);
-                        drive.driveDistance(0.25, 90, 30);
-                        drive.driveDistance(0.25, 180,3);
+                        // drive forward to park position 1
+                        drive.driveDistance(0.25, 0,25);
 
                     } else if (position == 2) {
+                        // return to starting position
+                        drive.driveSimpleDistance(0.25, -90,25);
+
                         // drive to park position 2
-                        drive.driveDistance(0.25, 0, 22);
-                        drive.driveDistance(0.25, 90, 24);
+                        drive.driveDistance(0.25, 0, 25);
 //                        drive.driveDistance(0.25, 180,3);
                     } else {
                         // drive to park position 3
-                        drive.driveDistance(0.25, 0, 48);
-                        drive.driveDistance(0.25, 90, 24);
+                        // return to starting position
+                        drive.driveDistance(0.25, -90,50);
+                        drive.driveDistance(0.25, 0, 25);
                     }
-                    drive.PIDRotate(0, 2);
-                    sleep(500);
-                    drive.PIDRotate(0, 2);
 
                     autoState = State.HALT;
 

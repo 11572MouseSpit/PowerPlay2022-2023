@@ -99,7 +99,7 @@ public class AutoRedCorner extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-    double position = 3;
+    double position = 2;
     private final static HWProfile robot = new HWProfile();
     private LinearOpMode opMode = this;
 
@@ -139,9 +139,6 @@ public class AutoRedCorner extends LinearOpMode {
 
         /** Wait for the game to begin */
 
-        robot.servoGrabber.setPosition(robot.clawClosed);
-
-
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
@@ -167,9 +164,9 @@ public class AutoRedCorner extends LinearOpMode {
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         if(recognition.getLabel() == "1 Bolt"){
                             position =1;
-                        } else if(recognition.getLabel() == "2 Bulb" ){
-                            position = 2;
-                        } else position = 3;
+                        } else if(recognition.getLabel() == "3 Panel" ){
+                            position = 3;
+                        } else position = 2;
                     }
                     telemetry.update();
                 }
@@ -183,47 +180,106 @@ public class AutoRedCorner extends LinearOpMode {
 
             switch (autoState) {
                 case TEST:
+                    drive.liftHigh();
+                    sleep(3000);
+                    //                    drive.driveDistance(.5, -90, 20);
+                    autoState = State.HALT;
 
                     break;
 
                 case DETECT_CONE:
-                    autoState = State.SCORE_CORNER;
+                    autoState = State.SCORE_LOW_JUNCTION;
+                    break;
+
+                case SCORE_LOW_JUNCTION:
+                    drive.driveDistance(0.5, 90, 11);
+                    drive.driveDistance(0.5, 0, 4);
+                    drive.liftLow();
+                    sleep(1000);
+                    drive.resetLift();
+                    sleep(1000);
+
+                    drive.driveDistance(0.5, 180, 4);
+
+                    drive.driveDistance(0.5, -90, 12);
+
+                    drive.PIDRotate(0, 1);
+                    autoState = State.FIRST_CONE_STACK;
+
+                    break;
+
+                case FIRST_CONE_STACK:
+                    drive.driveDistance(0.5, 0, 67);
+
+                    drive.driveDistance(0.5, 180, 10);
+
+                    drive.PIDRotate(-90, 2);
+
+                    drive.openClaw();
+
+                    drive.liftPosition(100);
+
+                    drive.driveDistance(0.5, 0, 25);
+
+
+                    drive.closeClaw();
+                    sleep(1000);
+
+                    drive.liftPosition(150);
+                    sleep(500);
+
+                    autoState = State.SCORE_LOW_JUNCTION2;
+                    break;
+
+                case SCORE_LOW_JUNCTION2:
+                    drive.driveDistance(0.5, 180, 25);
+
+                    drive.driveDistance(0.5, -90, 12);
+
+                    drive.liftLow();
+                    sleep(500);
+
+                    drive.driveDistance(0.3, 0, 4);
+
+                    drive.resetLift();
+                    sleep(300);
+
+                    drive.driveDistance(0.3, 180, 4);
+
+                    drive.driveDistance(0.5, 90, 12);
+
+                    autoState = State.PARK;
                     break;
 
                 case SCORE_CORNER:
-                    drive.driveDistance(0.25, 180, 2);
-                    drive.PIDRotate(-90, 2);
-                    sleep(500);
-                    drive.PIDRotate(-90, 2);
-                    drive.driveSimpleDistance(0.25, 180,25);
+//                    drive.driveDistance(0.25, 180, 2);
+                    drive.driveByTime(0.25, 90,.75);
+                    //  drive.PIDRotate(0,2);
+                    //  drive.PIDRotate(0,2);
+                    // drive.robotCorrect2(0.25, 0,.25);
 
-                    sleep(1000);
-                    robot.servoGrabber.setPosition(robot.clawOpen);
 
-                    autoState = State.PARK;
+                    autoState = State.HALT;
                     break;
 
                 case PARK:
 
                     if(position == 1) {
-                        // drive to park position 1
-                        drive.driveDistance(0.25, 0,2);
-                        drive.driveDistance(0.25, -90, 30);
-                        drive.driveDistance(0.25, 180,3);
+                        // drive forward to park position 1
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.3, 0,26);
 
                     } else if (position == 2) {
-                        // drive to park position 2
-                        drive.driveDistance(0.25, 0, 22);
-                        drive.driveDistance(0.25, -90, 24);
-//                        drive.driveDistance(0.25, 180,3);
+                        // return to starting position
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.25, 0,0);
+
                     } else {
                         // drive to park position 3
-                        drive.driveDistance(0.25, 0, 48);
-                        drive.driveDistance(0.25, -90, 24);
+                        // drive to park position 2
+                        drive.PIDRotate(-90, 2);
+                        drive.driveDistance(0.3, 180, 24);
                     }
-                    drive.PIDRotate(0, 2);
-                    sleep(500);
-                    drive.PIDRotate(0, 2);
 
                     autoState = State.HALT;
 
@@ -262,7 +318,7 @@ public class AutoRedCorner extends LinearOpMode {
     }
 
     enum State {
-        TEST, DETECT_CONE, SCORE_CORNER, PARK, HALT;
+        TEST, DETECT_CONE, SCORE_LOW_JUNCTION, SCORE_LOW_JUNCTION2, FIRST_CONE_STACK, SCORE_CORNER, PARK, HALT;
     }   // end of enum State
 
     /**
@@ -272,7 +328,7 @@ public class AutoRedCorner extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
