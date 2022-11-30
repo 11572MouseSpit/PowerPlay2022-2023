@@ -75,20 +75,20 @@ public class MecanumTeleOp extends LinearOpMode {
             }   // end if (gamepad1.x && ...)
 
             if(gamepad1.right_trigger>0.1){
-                robot.motorLeftLift.setPower(gamepad1.right_trigger * .1);
-                robot.motorRightLift.setPower(gamepad1.right_trigger);
+                robot.motorLeftLift.setPower(gamepad1.right_trigger * .4);
+                robot.motorRightLift.setPower(gamepad1.right_trigger * .4);
             } else if (gamepad1.left_trigger >0.1) {
-                robot.motorLeftLift.setPower(-gamepad1.left_trigger);
-                robot.motorRightLift.setPower(-gamepad1.left_trigger);
+                robot.motorLeftLift.setPower(-gamepad1.left_trigger * .4);
+                robot.motorRightLift.setPower(-gamepad1.left_trigger * .4);
             } else {
                 robot.motorLeftLift.setPower(0);
                 robot.motorRightLift.setPower(0);
             }
             if(gamepad1.a){
-                robot.servoGrabber.setPosition(0.7);
+                robot.servoGrabber.setPosition(0.5);
             }
             if(gamepad1.b) {
-                robot.servoGrabber.setPosition(0.9);
+                robot.servoGrabber.setPosition(0.3);
             }
             // Provide user feedback
             telemetry.addData("V1 = ", v1);
