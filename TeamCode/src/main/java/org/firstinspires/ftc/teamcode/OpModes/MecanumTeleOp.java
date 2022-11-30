@@ -18,7 +18,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double theta;
         double theta2 = 180;
         double r;
-        double power=0.5;
+        double power=1;
         double rightX, rightY;
         boolean TSEFlag = false;
         boolean fieldCentric = false;
@@ -50,9 +50,9 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             robotAngle = Math.atan2(gamepad1.left_stick_y, (-gamepad1.left_stick_x)) - Math.PI / 4;
-            rightX = gamepad1.right_stick_x;
+            rightX = -gamepad1.right_stick_x;
             rightY = -gamepad1.right_stick_y;
-            r = -Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
             v1 = (r * Math.cos(robotAngle - Math.toRadians(theta + theta2)) - rightX + rightY);
             v2 = (r * Math.sin(robotAngle - Math.toRadians(theta + theta2)) + rightX + rightY);
@@ -74,35 +74,52 @@ public class MecanumTeleOp extends LinearOpMode {
                 buttonPress = currentTime.time();
             }   // end if (gamepad1.x && ...)
 
-            if(gamepad1.right_trigger>0.1){
-                robot.motorLeftLift.setPower(gamepad1.right_trigger * .4);
-                robot.motorRightLift.setPower(gamepad1.right_trigger * .4);
-            } else if (gamepad1.left_trigger >0.1) {
-                robot.motorLeftLift.setPower(-gamepad1.left_trigger * .4);
-                robot.motorRightLift.setPower(-gamepad1.left_trigger * .4);
+            if(gamepad1.y){
+                robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
+                robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
+                robot.motorLeftLift.setPower(0.8);
+                robot.motorRightLift.setPower(0.8);
+            } else if (gamepad1.b) {
+                robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
+                robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
+                robot.motorLeftLift.setPower(0.8);
+                robot.motorRightLift.setPower(0.8);
+            }  else if (gamepad1.a) {
+                robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
+                robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
+                robot.motorLeftLift.setPower(0.8);
+                robot.motorRightLift.setPower(0.8);
+            } else if (gamepad1.right_trigger>0) {
+                robot.motorRightLift.setTargetPosition(0);
+                robot.motorLeftLift.setTargetPosition(0);
+                robot.motorLeftLift.setPower(0.5);
+                robot.motorRightLift.setPower(0.5);
             } else {
                 robot.motorLeftLift.setPower(0);
                 robot.motorRightLift.setPower(0);
             }
-            if(gamepad1.a){
-                robot.servoGrabber.setPosition(0.5);
+            if(gamepad1.right_bumper){
+                robot.servoGrabber.setPosition(0.7);
             }
-            if(gamepad1.b) {
-                robot.servoGrabber.setPosition(0.3);
+            if(gamepad1.left_bumper) {
+                robot.servoGrabber.setPosition(0.9);
             }
+
+            if(gamepad1.left_bumper){
+                robot.servoGrabber.setPosition(0.7);
+            }
+            if(gamepad1.right_bumper) {
+                robot.servoGrabber.setPosition(0.9);
+            }
+
+
             // Provide user feedback
             telemetry.addData("V1 = ", v1);
             telemetry.addData("V2 = ", v2);
             telemetry.addData("V3 = ", v3);
             telemetry.addData("V4 = ", v4);
-            telemetry.addData("dpad_up = ", gamepad1.dpad_up);
-            telemetry.addData("dpad_down = ", gamepad1.dpad_down);
-            telemetry.addData("dpad_left = ", gamepad1.dpad_left);
-            telemetry.addData("dpad_right = ", gamepad1.dpad_right);
-            telemetry.addData("Left Stick X = ", gamepad1.left_stick_x);
-            telemetry.addData("Left Stick Y = ", gamepad1.left_stick_y);
-            telemetry.addData("Right Stick X = ", gamepad1.right_stick_x);
-            telemetry.addData("Right Stick Y = ", gamepad1.right_stick_y);
+            telemetry.addData("Motor Left Lift = ", robot.motorLeftLift.getCurrentPosition());
+            telemetry.addData("Motor Right Lift = ", robot.motorRightLift.getCurrentPosition());
             telemetry.addData("Theta = ", theta);
             telemetry.addData("Theta2 = ", theta);
             telemetry.addData("IMU Value: ", theta);

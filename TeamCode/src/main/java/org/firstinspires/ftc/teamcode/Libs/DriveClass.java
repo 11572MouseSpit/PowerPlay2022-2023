@@ -38,7 +38,7 @@ public class DriveClass {
      * @param heading
      * @param duration
      */
-    public void robotCorrect2(double power, double heading, double duration) {
+    public void driveByTime(double power, double heading, double duration) {
         String action = "Initializing";
         double initZ = getZAngle();
         double currentZ = 0;
@@ -120,6 +120,7 @@ public class DriveClass {
         double currentZ = 0;
         double zCorrection = 0;
         boolean active = true;
+        double strafeFactor = 1;
 
         double theta = Math.toRadians(90 + heading);
         double lfStart = 0;
@@ -131,6 +132,10 @@ public class DriveClass {
         lrStart = robot.motorLR.getCurrentPosition();
         rfStart = robot.motorRF.getCurrentPosition();
         rrStart = robot.motorRR.getCurrentPosition();
+
+        if (heading == 90 || heading == -90){
+            strafeFactor = robot.STRAFE_FACTOR;
+        }
 
         while(opMode.opModeIsActive() && active) {
 
@@ -179,7 +184,7 @@ public class DriveClass {
             opMode.telemetry.addData("Calculated Distance = ", calcDistance(heading, rfStart, rrStart, lfStart, lrStart));
             opMode.telemetry.update();
 
-            if(calcDistance(heading, rfStart, rrStart, lfStart, lrStart) >= distance) active = false;
+            if(calcDistance(heading, rfStart, rrStart, lfStart, lrStart) >= (distance * strafeFactor)) active = false;
             opMode.idle();
 
         }   // end of while loop
@@ -307,6 +312,49 @@ public class DriveClass {
 
         return rotationalAngle;
     }   // end method gyro360
+
+    public void liftHigh(){
+        robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
+        robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
+        robot.motorLeftLift.setPower(0.8);
+        robot.motorRightLift.setPower(0.8);
+
+    }
+
+    public void closeClaw(){
+
+    }
+
+    public void openClaw(){
+
+    }
+    public void liftPosition(int liftPosition){
+        robot.motorRightLift.setTargetPosition(liftPosition);
+        robot.motorLeftLift.setTargetPosition(liftPosition);
+        robot.motorLeftLift.setPower(0.8);
+        robot.motorRightLift.setPower(0.8);
+    }
+
+    public void liftMid(){
+        robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
+        robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
+        robot.motorLeftLift.setPower(0.8);
+        robot.motorRightLift.setPower(0.8);
+    }
+
+    public void liftLow(){
+        robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
+        robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
+        robot.motorLeftLift.setPower(0.8);
+        robot.motorRightLift.setPower(0.8);
+    }
+
+    public void resetLift(){
+        robot.motorRightLift.setTargetPosition(0);
+        robot.motorLeftLift.setTargetPosition(0);
+        robot.motorLeftLift.setPower(0.8);
+        robot.motorRightLift.setPower(0.8);
+    }
 
     /**
      *  Method: driveSimpleDistance
@@ -470,19 +518,5 @@ public class DriveClass {
 
         return Math.abs(distanceTraveled);
     }
-
-    /**
-     * Method convertToInches
-     *  -   Converts the measured encoder values to inches
-     *      Assumes drive motors only
-     * @param convValue
-     * @return
-     */
-    private double convertToInches(double convValue){
-
-        return (convValue / robot.USD_COUNTS_PER_INCH);
-
-    }   // end of returnInches method
-
 
 }   // close the driveMecanum class

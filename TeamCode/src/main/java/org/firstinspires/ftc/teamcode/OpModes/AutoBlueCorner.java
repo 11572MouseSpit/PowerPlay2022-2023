@@ -189,7 +189,7 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case SCORE_CORNER:
 //                    drive.driveDistance(0.25, 180, 2);
-                    drive.robotCorrect2(0.25, -90,.75);
+                    drive.driveByTime(0.25, -90,.75);
 
 
                     autoState = State.HALT;
@@ -215,7 +215,7 @@ public class AutoBlueCorner extends LinearOpMode {
                         drive.driveDistance(0.25, 0, 25);
                     }
 
-                        autoState = State.HALT;
+                    autoState = State.HALT;
 
                     break;
 
@@ -260,7 +260,7 @@ public class AutoBlueCorner extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
