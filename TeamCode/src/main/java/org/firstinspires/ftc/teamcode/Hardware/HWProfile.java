@@ -23,9 +23,9 @@ public class HWProfile {
     public Servo servoGrabber = null;
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
-    public final int LOW_JUNCTION_POSITION = 300;
-    public final int MID_JUNCTION_POSITION = 450;
-    public final int MAX_LIFT_POSITION = 670;
+    public final int LOW_JUNCTION_POSITION = 380;
+    public final int MID_JUNCTION_POSITION = 600;
+    public final int MAX_LIFT_POSITION = 1000;
 
     public final double STRAFE_FACTOR = 1.1;
 

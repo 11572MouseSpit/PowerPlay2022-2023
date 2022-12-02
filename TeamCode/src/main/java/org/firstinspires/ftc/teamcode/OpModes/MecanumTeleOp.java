@@ -65,7 +65,7 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
 
             // Control which direction is forward and which is backward from the driver POV
-            if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
+ /*           if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
                 if (theta2 == 180) {
                     theta2 = 0;
                 } else {
@@ -73,43 +73,39 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
                 buttonPress = currentTime.time();
             }   // end if (gamepad1.x && ...)
-
+*/
             if(gamepad1.y){
                 robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
                 robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-                robot.motorLeftLift.setPower(0.8);
-                robot.motorRightLift.setPower(0.8);
+                robot.motorLeftLift.setPower(0.9);
+                robot.motorRightLift.setPower(0.9);
             } else if (gamepad1.b) {
                 robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
                 robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-                robot.motorLeftLift.setPower(0.8);
-                robot.motorRightLift.setPower(0.8);
+                robot.motorLeftLift.setPower(.9);
+                robot.motorRightLift.setPower(0.9);
             }  else if (gamepad1.a) {
                 robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
                 robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-                robot.motorLeftLift.setPower(0.8);
-                robot.motorRightLift.setPower(0.8);
-            } else if (gamepad1.right_trigger>0) {
+                robot.motorLeftLift.setPower(0.9);
+                robot.motorRightLift.setPower(0.9);
+            } else if (gamepad1.right_trigger>0.1) {
                 robot.motorRightLift.setTargetPosition(0);
                 robot.motorLeftLift.setTargetPosition(0);
-                robot.motorLeftLift.setPower(0.5);
-                robot.motorRightLift.setPower(0.5);
+                robot.motorLeftLift.setPower(0.3);
+                robot.motorRightLift.setPower(0.3);
+            } else if (gamepad1.left_trigger>0.1) {
+                robot.motorLeftLift.setPower(0.9);
+                robot.motorRightLift.setPower(0.9);
             } else {
                 robot.motorLeftLift.setPower(0);
                 robot.motorRightLift.setPower(0);
             }
             if(gamepad1.right_bumper){
-                robot.servoGrabber.setPosition(0.7);
+                robot.servoGrabber.setPosition(0.6);
             }
             if(gamepad1.left_bumper) {
-                robot.servoGrabber.setPosition(0.9);
-            }
-
-            if(gamepad1.left_bumper){
-                robot.servoGrabber.setPosition(0.7);
-            }
-            if(gamepad1.right_bumper) {
-                robot.servoGrabber.setPosition(0.9);
+                robot.servoGrabber.setPosition(0.3);
             }
 
 
