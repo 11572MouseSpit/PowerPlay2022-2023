@@ -25,7 +25,7 @@ public class HWProfile {
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LOW_JUNCTION_POSITION = 380;
     public final int MID_JUNCTION_POSITION = 600;
-    public final int MAX_LIFT_POSITION = 1030;
+    public final int MAX_LIFT_POSITION = 1060;
 
     public final double STRAFE_FACTOR = 1.1;
 
