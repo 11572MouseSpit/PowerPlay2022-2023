@@ -192,6 +192,9 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case SCORE_LOW_JUNCTION:
+                    // close the claw to grab the cone
+                    drive.closeClaw();
+
                     // strafe over to scoring position
                     drive.driveDistance(0.5, -90, 11);
 

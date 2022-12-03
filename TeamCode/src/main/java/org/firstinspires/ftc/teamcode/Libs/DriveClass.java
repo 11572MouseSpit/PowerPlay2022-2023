@@ -322,12 +322,13 @@ public class DriveClass {
     }
 
     public void closeClaw(){
-
+        robot.servoGrabber.setPosition(.3);
     }
 
     public void openClaw(){
-
+        robot.servoGrabber.setPosition(.6);
     }
+
     public void liftPosition(int liftPosition){
         robot.motorRightLift.setTargetPosition(liftPosition);
         robot.motorLeftLift.setTargetPosition(liftPosition);
