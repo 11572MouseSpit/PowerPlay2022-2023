@@ -94,9 +94,11 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.motorLeftLift.setTargetPosition(0);
                 robot.motorLeftLift.setPower(0.3);
                 robot.motorRightLift.setPower(0.3);
-            } else if (gamepad1.left_trigger>0.1) {
-                robot.motorLeftLift.setPower(0.9);
-                robot.motorRightLift.setPower(0.9);
+            } else if (gamepad1.left_trigger > 0.1) {
+                robot.motorRightLift.setTargetPosition(20);
+                robot.motorLeftLift.setTargetPosition(20);
+                robot.motorRightLift.setPower(0.5);
+                robot.motorLeftLift.setPower(0.5);
             } else {
                 robot.motorLeftLift.setPower(0);
                 robot.motorRightLift.setPower(0);
