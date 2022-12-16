@@ -75,6 +75,10 @@ public class BrokenBot extends LinearOpMode {
             robot.motorLR.setPower(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
             robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
 
+            if(gamepad2.right_bumper){
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
+            } else robot.servoFinger.setPosition(robot.FINGER_IN);
+
             /*if (gamepad1.right_trigger > 0.1&&power < 1) {
                 power +=.05;
             } else if (gamepad1.left_trigger > 0.1&&power > 0) {

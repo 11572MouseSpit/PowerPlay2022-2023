@@ -21,13 +21,16 @@ public class HWProfile {
     public DcMotor motorRightLift = null;
     public BNO055IMU imu = null;
     public Servo servoGrabber = null;
+    public Servo servoFinger = null;
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LOW_JUNCTION_POSITION = 380;
     public final int MID_JUNCTION_POSITION = 600;
-    public final int MAX_LIFT_POSITION = 1060;
+    public final int MAX_LIFT_POSITION = 900;
 
     public final double STRAFE_FACTOR = 1.1;
+    public final double FINGER_OUT = 0.4;
+    public final double FINGER_IN = 0.6;
 
 
     /* local OpMode members. */
@@ -101,6 +104,7 @@ public class HWProfile {
         // May want to use RUN_USING_ENCODERS if encoders are installed.
 
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
+        servoFinger = hwMap.get(Servo.class, "servoFinger");
 
         imu = hwMap.get(BNO055IMU.class, "imu");
 

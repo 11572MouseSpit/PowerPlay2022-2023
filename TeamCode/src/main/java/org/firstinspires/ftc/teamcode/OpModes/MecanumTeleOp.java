@@ -74,6 +74,12 @@ public class MecanumTeleOp extends LinearOpMode {
                 buttonPress = currentTime.time();
             }   // end if (gamepad1.x && ...)
 */
+
+            if(gamepad1.dpad_up){
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
+            } else if(gamepad1.dpad_down){
+                robot.servoFinger.setPosition(robot.FINGER_IN);
+            }
             if(gamepad1.y){
                 robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
                 robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
