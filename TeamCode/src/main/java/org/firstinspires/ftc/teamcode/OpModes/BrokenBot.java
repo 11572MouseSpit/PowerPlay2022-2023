@@ -4,8 +4,11 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
+import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
 @TeleOp(name = "Broken Bot", group = "Competition")
 
@@ -24,19 +27,18 @@ public class BrokenBot extends LinearOpMode {
         boolean fieldCentric = false;
         int targetPosition = 0;
         double cupPosition = 0;
+        LinearOpMode opMode = this;
+
 
         ElapsedTime currentTime = new ElapsedTime();
         double buttonPress = currentTime.time();
 
         robot.init(hardwareMap);
 
+        DriveClass drive = new DriveClass(robot, opMode);
+
         telemetry.addData("Ready to Run: ", "GOOD LUCK");
         telemetry.update();
-
-        boolean shippingElement = false;
-        boolean armDeployed = false;
-
-        boolean clawOpen = true;
 
         waitForStart();
 
@@ -46,7 +48,8 @@ public class BrokenBot extends LinearOpMode {
              ****** Mecanum Drive Control section ******
              *******************************************/
             if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
-                theta = robot.imu.getAngularOrientation().thirdAngle - 90;
+                theta = robot.imu.getAbsoluteHeading() - 90;
+                        //robot.imu.getAngularOrientation().thirdAngle - 90;
             } else {
                 theta = 0;      // do not adjust for the angular position of the robot
             }
@@ -70,10 +73,10 @@ public class BrokenBot extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 v4 = 1;
             }
-            robot.motorLF.setPower(com.qualcomm.robotcore.util.Range.clip((v1), -power, power));
-            robot.motorRF.setPower(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
-            robot.motorLR.setPower(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
-            robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
+            robot.motorLeftFront.set(com.qualcomm.robotcore.util.Range.clip((v1), -power, power));
+            robot.motorRightFront.set(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
+            robot.motorLeftRear.set(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
+            robot.motorRightRear.set(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
 
             if(gamepad2.right_bumper){
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
@@ -85,21 +88,52 @@ public class BrokenBot extends LinearOpMode {
                 power -= 0.5;
             } */
 
+            /*  LIFT CONTROL  */
+            if(gamepad1.a){
+                targetPosition = robot.LIFT_RESET;
+            } else if(gamepad1.b){
+                targetPosition = robot.LIFT_LOW_JUNCTION;
+            } else if(gamepad1.x) {
+                targetPosition = robot.LIFT_MID_JUNCTION;
+            } else if(gamepad1.y) {
+                targetPosition = robot.LIFT_MAX_HEIGHT;
+            }
 
+            if (gamepad1.dpad_up){
+                targetPosition = targetPosition + 20;
+            } else if (gamepad1.dpad_down) {
+                targetPosition = targetPosition - 20;
+            }
+
+            /* Limit the range of the lift so as not to damage the robot */
+            Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
+
+            drive.liftPosition(targetPosition);
+            robot.motorsLift.set(0.9);
+
+            /* Claw Control */
+            if(gamepad1.right_bumper) {
+                drive.openClaw();
+            } else if (gamepad1.left_bumper){
+                drive.closeClaw();
+            }
+
+            if(gamepad1.dpad_right){
+                drive.newPIDRotate(-90);
+            }
+            if (gamepad1.dpad_left){
+                drive.newPIDRotate(90);
+            }
             // Provide user feedback
             telemetry.addData("Left lift position:", robot.motorLeftLift.getCurrentPosition());
             telemetry.addData("Right lift position:", robot.motorRightLift.getCurrentPosition());
-            telemetry.addData("Motor Left Rear:", robot.motorLR.getCurrentPosition());
-            telemetry.addData("Motor Left Front:", robot.motorLF.getCurrentPosition());
-            telemetry.addData("Motor Right Front:", robot.motorRF.getCurrentPosition());
-            telemetry.addData("Motor Right Rear:", robot.motorRR.getCurrentPosition());
-            telemetry.addData("V1 = ", v1);
-            telemetry.addData("V2 = ", v2);
-            telemetry.addData("V3 = ", v3);
-            telemetry.addData("V4 = ", v4);
-            telemetry.addData("IMU First Angle = ", robot.imu.getAngularOrientation().firstAngle);
-            telemetry.addData("IMU Second Angle = ", robot.imu.getAngularOrientation().secondAngle);
-            telemetry.addData("IMU Third Angle = ", robot.imu.getAngularOrientation().firstAngle);
+            telemetry.addData("Motor Left Rear:", robot.motorLeftRear.getCurrentPosition());
+            telemetry.addData("Motor Left Front:", robot.motorLeftFront.getCurrentPosition());
+            telemetry.addData("Motor Right Front:", robot.motorRightFront.getCurrentPosition());
+            telemetry.addData("Motor Right Rear:", robot.motorRightRear.getCurrentPosition());
+            telemetry.addData("IMU Absolute Heading = ", robot.imu.getAbsoluteHeading());
+            telemetry.addData("IMU Heading = ", robot.imu.getHeading());
+            telemetry.addData("IMU Angles? = ", robot.imu.getAngles());
             if( v1 != 0){
                 telemetry.addData("Motor Left Front = ", v1);
             }
@@ -117,10 +151,8 @@ public class BrokenBot extends LinearOpMode {
             telemetry.addData("Right Stick X = ", gamepad1.right_stick_x);
             telemetry.addData("Right Stick Y = ", gamepad1.right_stick_y);
             telemetry.addData("Theta = ", theta);
-            telemetry.addData("Theta2 = ", theta);
-            telemetry.addData("IMU Value: ", theta);
             telemetry.update();
 
         }   // end of while(opModeIsActive)
     }   // end of runOpMode()
-}       // end of MSTeleop class
+}       // end of BrokenBot class

@@ -44,7 +44,8 @@ public class MecanumTeleOp extends LinearOpMode {
              ****** Mecanum Drive Control section ******
              *******************************************/
             if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
-                theta = robot.imu.getAngularOrientation().firstAngle + 90;
+                theta = robot.imu.getAbsoluteHeading() + 90;
+//                        robot.imu.getAngularOrientation().firstAngle + 90;
             } else {
                 theta = 0;      // do not adjust for the angular position of the robot
             }
@@ -81,33 +82,22 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.servoFinger.setPosition(robot.FINGER_IN);
             }
             if(gamepad1.y){
-                robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-                robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-                robot.motorLeftLift.setPower(0.9);
-                robot.motorRightLift.setPower(0.9);
+                robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
+                robot.motorRightLift.set(0.9);
             } else if (gamepad1.b) {
-                robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-                robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-                robot.motorLeftLift.setPower(.9);
-                robot.motorRightLift.setPower(0.9);
+                robot.motorsLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
+                robot.motorRightLift.set(0.9);
             }  else if (gamepad1.a) {
-                robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-                robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-                robot.motorLeftLift.setPower(0.9);
-                robot.motorRightLift.setPower(0.9);
+                robot.motorsLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
+                robot.motorRightLift.set(0.9);
             } else if (gamepad1.right_trigger>0.1) {
-                robot.motorRightLift.setTargetPosition(0);
-                robot.motorLeftLift.setTargetPosition(0);
-                robot.motorLeftLift.setPower(0.3);
-                robot.motorRightLift.setPower(0.3);
+                robot.motorsLift.setTargetPosition(0);
+                robot.motorsLift.set(0.5);
             } else if (gamepad1.left_trigger > 0.1) {
-                robot.motorRightLift.setTargetPosition(20);
-                robot.motorLeftLift.setTargetPosition(20);
-                robot.motorRightLift.setPower(0.5);
-                robot.motorLeftLift.setPower(0.5);
+                robot.motorsLift.setTargetPosition(20);
+                robot.motorsLift.set(0.5);
             } else {
-                robot.motorLeftLift.setPower(0);
-                robot.motorRightLift.setPower(0);
+                robot.motorsLift.set(0);
             }
             if(gamepad1.right_bumper){
                 robot.servoGrabber.setPosition(0.6);

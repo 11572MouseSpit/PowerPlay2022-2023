@@ -196,14 +196,14 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.closeClaw();
                     sleep(500);
                     // strafe over to scoring position
-                    drive.driveDistance(0.5, -90, 11);
+                    drive.newDriveDistance(0.5, -90, 11);
 
                     // raise the lift to place the cone
                     drive.liftPosition(420);
                     sleep(1000);
 
                     // drive forward to place the cone
-                    drive.driveDistance(0.5, 0, 4);
+                    drive.newDriveDistance(0.5, 0, 4);
 
                     // Lower the lift to place the cone
                     drive.resetLift();
@@ -211,26 +211,26 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.driveDistance(0.5, 180, 4);
+                    drive.newDriveDistance(0.5, 180, 4);
 
                     //strafe back to starting position
-                    drive.driveDistance(0.5, 90, 12);
+                    drive.newDriveDistance(0.5, 90, 12);
 
                     // realign towards the signal cone
-                    drive.PIDRotate(0, 1);
+                    drive.newPIDRotate(0);
                     autoState = AutoBlueCorner.State.FIRST_CONE_STACK;
 
                     break;
 
                 case FIRST_CONE_STACK:
                     // push the signal cone out of the way
-                    drive.driveDistance(0.5, 0, 67);
+                    drive.newDriveDistance(0.5, 0, 67);
 
                     // back into position to pick up the second cone
-                    drive.driveDistance(0.5, 180, 8);
+                    drive.newDriveDistance(0.5, 180, 8);
 
                     // turn towards the stack of cones
-                    drive.PIDRotate(90, 1);
+                    drive.newPIDRotate(90);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(155);
@@ -239,13 +239,13 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.driveDistance(0.5, 0, 12);
+                    drive.newDriveDistance(0.5, 0, 12);
 
                     // turn towards the stack of cones
-                    drive.PIDRotate(90, 1);
+                    drive.newPIDRotate(90);
 
                     // drive to the stack of cones
-                    drive.driveDistance(0.5, 0, 12);
+                    drive.newDriveDistance(0.5, 0, 12);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
@@ -256,21 +256,21 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.driveDistance(0.5, 180, 26);
+                    drive.newDriveDistance(0.5, 180, 26);
 
                     autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
                     // strafe towards the 2nd low junction
-                    drive.driveDistance(0.5, 90, 14);
+                    drive.newDriveDistance(0.5, 90, 14);
 
                     // raise the lift to the low junction
                     drive.liftLow();
                     sleep(500);
 
                     // drive towards the low junction to place the cone
-                    drive.driveDistance(0.3, 0, 3);
+                    drive.newDriveDistance(0.3, 0, 3);
 
                     // lower the lift to place the cone
                     drive.resetLift();
@@ -280,10 +280,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.driveDistance(0.3, 180, 4);
+                    drive.newDriveDistance(0.3, 180, 4);
 
                     // strafe back into position to pick up another cone
-                    drive.driveDistance(0.5, -90, 12);
+                    drive.newDriveDistance(0.5, -90, 12);
 
                     autoState = AutoBlueCorner.State.PARK;
                     break;
@@ -296,7 +296,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.driveDistance(0.5, 0, 25);
+                    drive.newDriveDistance(0.5, 0, 25);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
@@ -307,7 +307,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.driveDistance(0.5, 180, 50);
+                    drive.newDriveDistance(0.5, 180, 50);
                     autoState = AutoBlueCorner.State.SCORE_HIGH_JUNCTION;
                     break;
 
@@ -324,14 +324,14 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case SCORE_HIGH_JUNCTION:
                     // strafe towards the 2nd low junction
-                    drive.driveDistance(0.5, -90, 14);
+                    drive.newDriveDistance(0.5, -90, 14);
 
                     // raise the lift to the low junction
                     drive.liftHigh();
                     sleep(500);
 
                     // drive towards the low junction to place the cone
-                    drive.driveDistance(0.3, 0, 0);
+                    drive.newDriveDistance(0.3, 0, 0);
 
                     // lower the lift to place the cone
                     drive.resetLift();
@@ -341,10 +341,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.driveDistance(0.3, 180, 0);
+                    drive.newDriveDistance(0.3, 180, 0);
 
                     // strafe back into position to pick up another cone
-                    drive.driveDistance(0.5, 90, 12);
+                    drive.newDriveDistance(0.5, 90, 12);
 
                     autoState = AutoBlueCorner.State.PARK;
                     break;
@@ -352,15 +352,15 @@ public class AutoBlueCorner extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.driveDistance(0.3, 0,28);
+                        drive.newDriveDistance(0.3, 0,28);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.driveDistance(0.3, 0,3);
+                        drive.newDriveDistance(0.3, 0,3);
 
                     } else {
                         // drive to park position 3
-                        drive.driveDistance(0.3, 180, 21);
+                        drive.newDriveDistance(0.3, 180, 21);
                     }
 
                     autoState = AutoBlueCorner.State.HALT;
@@ -370,7 +370,7 @@ public class AutoBlueCorner extends LinearOpMode {
                 case HALT:
 
                     // Stop all motors
-                    drive.motorsHalt();
+                    drive.newMotorsHalt();
 
                     // End the program
                     requestOpModeStop();

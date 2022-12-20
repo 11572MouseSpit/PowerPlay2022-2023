@@ -15,41 +15,25 @@ public class RunForwardAuto extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        double v1, v2, v3, v4, robotAngle;
-        double theta;
-        double theta2 = 180;
-        double r;
-        double power=0.5;
-        double rightX, rightY;
-        boolean TSEFlag = false;
-        boolean fieldCentric = false;
-        int targetPosition = 0;
-        double cupPosition = 0;
-
-        ElapsedTime currentTime= new ElapsedTime();
-        double buttonPress = currentTime.time();
 
         robot.init(hardwareMap);
 
         telemetry.addData("Ready to Run: ","GOOD LUCK");
         telemetry.update();
 
-        boolean shippingElement=false;
-        boolean armDeployed=false;
-
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.motorLF.setPower(-.2);
-            robot.motorLR.setPower(-.2);
-            robot.motorRF.setPower(-.2);
-            robot.motorRR.setPower(-.2);
+            robot.motorLeftFront.set(-.2);
+            robot.motorLeftRear.set(-.2);
+            robot.motorLeftRear.set(-.2);
+            robot.motorRightRear.set(-.2);
             sleep(750);
-            robot.motorLF.setPower(0);
-            robot.motorLR.setPower(0);
-            robot.motorRF.setPower(0);
-            robot.motorRR.setPower(0);
-            sleep(100000);
+            robot.motorLeftFront.set(0);
+            robot.motorLeftRear.set(0);
+            robot.motorRightFront.set(0);
+            robot.motorRightRear.set(0);
+            sleep(1000);
             }
             // Provide user feedback
 

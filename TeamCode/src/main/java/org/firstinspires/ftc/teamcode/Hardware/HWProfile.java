@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,24 +13,42 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HWProfile {
     /* Public OpMode members. */
+    public MotorEx motorLeftFront   =   null;
+    public MotorEx motorRightFront  =   null;
+    public MotorEx motorLeftRear    =   null;
+    public MotorEx motorRightRear   =   null;
+    public MotorEx motorRightLift   =   null;
+    public MotorEx motorLeftLift    =   null;
+    public MotorGroup motorsLift    =   null;
+
+    public RevIMU imu =                 null;
+
+
     public DcMotor motorLF   = null;
     public DcMotor  motorLR  = null;
     public DcMotor  motorRF     = null;
     public DcMotor  motorRR    = null;
-    public DcMotor motorLeftLift = null;
-    public DcMotor motorRightLift = null;
-    public BNO055IMU imu = null;
+//    public DcMotor motorLeftLift = null;
+//    public DcMotor motorRightLift = null;
+//    public BNO055IMU imu = null;
     public Servo servoGrabber = null;
     public Servo servoFinger = null;
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
-    public final int LOW_JUNCTION_POSITION = 380;
-    public final int MID_JUNCTION_POSITION = 600;
-    public final int MAX_LIFT_POSITION = 900;
+    public final int LIFT_RESET = 0;
+    public final int LIFT_LOW_JUNCTION = 380;
+    public final int LIFT_MID_JUNCTION = 600;
+    public final int LIFT_MAX_HEIGHT = 900;
+    public final double LIFT_POSITION_TOLERANCE = 10;
+    public final double LIFT_kP = 0.5;
+    public final double LIFT_kI = 0.5;
+    public final double LIFT_kD = 0.5;
+    public final double LIFT_kF = 0.5;
 
     public final double STRAFE_FACTOR = 1.1;
     public final double FINGER_OUT = 0.4;
     public final double FINGER_IN = 0.6;
+
 
 
     /* local OpMode members. */
@@ -48,6 +66,34 @@ public class HWProfile {
         hwMap = ahwMap;
 
 //        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorDistance;
+
+        // Define Motors utilizing FTCLib class
+        motorLeftFront = new MotorEx(hwMap, "motorLF", Motor.GoBILDA.RPM_312);
+        motorLeftFront.setRunMode(Motor.RunMode.RawPower);
+        motorLeftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorLeftFront.setInverted(false);
+        motorLeftFront.resetEncoder();
+
+        motorLeftRear = new MotorEx(hwMap, "motorLR", Motor.GoBILDA.RPM_312);
+        motorLeftRear.setRunMode(Motor.RunMode.RawPower);
+        motorLeftRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorLeftRear.setInverted(false);
+        motorLeftRear.resetEncoder();
+
+        motorRightFront = new MotorEx(hwMap, "motorRF", Motor.GoBILDA.RPM_312);
+        motorRightFront.setRunMode(Motor.RunMode.RawPower);
+        motorRightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorRightFront.setInverted(true);
+        motorRightFront.resetEncoder();
+
+        motorRightRear = new MotorEx(hwMap, "motorRR", Motor.GoBILDA.RPM_312);
+        motorRightRear.setRunMode(Motor.RunMode.RawPower);
+        motorRightRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorRightRear.setInverted(false);
+        motorRightRear.resetEncoder();
+
+
+
 
         // Define and Initialize Motors
         motorLF = hwMap.get(DcMotor.class, "motorLF");
@@ -82,22 +128,25 @@ public class HWProfile {
         motorRR.setPower(0);
 
 
-        motorLeftLift = hwMap.get(DcMotor.class, "motorLeftLift");
-        motorLeftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLeftLift = new MotorEx(hwMap, "motorLeftLift", Motor.GoBILDA.RPM_117);
+        motorLeftLift.setRunMode(Motor.RunMode.PositionControl);
+        motorLeftLift.setInverted(true);
+        motorLeftLift.setPositionCoefficient(LIFT_kP);
         motorLeftLift.setTargetPosition(0);
-        motorLeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLeftLift.setPower(0);
+        motorLeftLift.set(0);               // set motor power
+        motorLeftLift.setPositionTolerance(LIFT_POSITION_TOLERANCE);
 
-
-        motorRightLift = hwMap.get(DcMotor.class, "motorRightLift");
-        motorRightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRightLift = new MotorEx(hwMap, "motorLeftLift", Motor.GoBILDA.RPM_117);
+        motorRightLift.setRunMode(Motor.RunMode.PositionControl);
+        motorRightLift.setInverted(false);
+        motorRightLift.setPositionCoefficient(LIFT_kP);
         motorRightLift.setTargetPosition(0);
-        motorRightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightLift.setPower(0);
+        motorRightLift.set(0);               // set motor power
+        motorRightLift.setPositionTolerance(LIFT_POSITION_TOLERANCE);
+
+        MotorGroup liftMotors = new MotorGroup(motorLeftLift, motorRightLift);
+        liftMotors.setRunMode(Motor.RunMode.PositionControl);
+        liftMotors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
 
         // Set all motors to run without encoders.
@@ -106,6 +155,12 @@ public class HWProfile {
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
         servoFinger = hwMap.get(Servo.class, "servoFinger");
 
+
+        // imu init
+        imu = new RevIMU(hwMap);
+        imu.init();
+
+        /*
         imu = hwMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -116,6 +171,8 @@ public class HWProfile {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
+
+         */
 
     }
 }  // end of HWProfile Class

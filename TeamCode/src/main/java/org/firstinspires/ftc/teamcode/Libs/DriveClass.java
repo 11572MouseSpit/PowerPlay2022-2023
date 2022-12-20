@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Libs;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -314,10 +315,8 @@ public class DriveClass {
     }   // end method gyro360
 
     public void liftHigh(){
-        robot.motorRightLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.MAX_LIFT_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
+        robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
+        robot.motorRightLift.set(0.8);
 
     }
 
@@ -330,31 +329,23 @@ public class DriveClass {
     }
 
     public void liftPosition(int liftPosition){
-        robot.motorRightLift.setTargetPosition(liftPosition);
-        robot.motorLeftLift.setTargetPosition(liftPosition);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
+        robot.motorsLift.setTargetPosition(liftPosition);
+        robot.motorRightLift.set(0.8);
     }
 
     public void liftMid(){
-        robot.motorRightLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.MID_JUNCTION_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
+        robot.motorsLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
+        robot.motorRightLift.set(0.8);
     }
 
     public void liftLow(){
-        robot.motorRightLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-        robot.motorLeftLift.setTargetPosition(robot.LOW_JUNCTION_POSITION);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
+        robot.motorsLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
+        robot.motorRightLift.set(0.8);
     }
 
     public void resetLift(){
-        robot.motorRightLift.setTargetPosition(0);
-        robot.motorLeftLift.setTargetPosition(0);
-        robot.motorLeftLift.setPower(0.8);
-        robot.motorRightLift.setPower(0.8);
+        robot.motorsLift.setTargetPosition(0);
+        robot.motorRightLift.set(0.8);
     }
 
     /**
@@ -444,7 +435,8 @@ public class DriveClass {
      * @return zAngle
      */
     public double getZAngle(){
-        return (-robot.imu.getAngularOrientation().firstAngle);
+        return (-robot.imu.getAbsoluteHeading());
+        //return (-robot.imu.getAngularOrientation().firstAngle);
     }   // close getZAngle method
 
     /**
@@ -519,5 +511,172 @@ public class DriveClass {
 
         return Math.abs(distanceTraveled);
     }
+
+
+    /*******************************************************************************************
+     *******************************************************************************************
+     ***************************** FTCLIB Classes - For Testing ********************************
+     *******************************************************************************************
+     *******************************************************************************************/
+
+
+    /**
+     *  Method: driveDistance
+     *  -   uses the encoder values to determine distance traveled.
+     *  -   This method will autocorrect the position of the robot if it drifts off its position
+     *  -   Note: This method uses gyro360 to measure it's angle. The reference target angle used
+     *              is 0 degrees as that ensures that the reference and measured angles always
+     *              provide consistent reporting comparisons.
+     * @param power     - provides the power/speed that the robot should move
+     * @param heading   - direction for the robot to strafe to
+     * @param distance  - amount of time that the robot will move
+     */
+    public void newDriveDistance(double power, double heading, double distance) {
+        double initZ = getZAngle();
+        double currentZ = 0;
+        double zCorrection = 0;
+        boolean active = true;
+        double strafeFactor = 1;
+
+        double theta = Math.toRadians(90 + heading);
+
+        /* reset the motor encoders */
+        robot.motorLeftFront.resetEncoder();
+        robot.motorLeftRear.resetEncoder();
+        robot.motorRightFront.resetEncoder();
+        robot.motorRightRear.resetEncoder();
+
+        while(opMode.opModeIsActive() && active) {
+
+            RF = power * (Math.sin(theta) + Math.cos(theta));
+            LF = power * (Math.sin(theta) - Math.cos(theta));
+            LR = power * (Math.sin(theta) + Math.cos(theta));
+            RR = power * (Math.sin(theta) - Math.cos(theta));
+
+            if (initZ > 170 || initZ < -170){
+                currentZ = gyro360(0);      // always use 0 as the reference angle
+            } else {
+                currentZ = getZAngle();
+            }
+            if (currentZ != initZ){
+                zCorrection = Math.abs(initZ - currentZ)/100;
+
+                if (initZ < currentZ) {
+                    RF = RF + zCorrection;
+                    RR = RR + zCorrection;
+                    LF = LF - zCorrection;
+                    LR = LR - zCorrection;
+                }
+                if (initZ > currentZ) {
+                    RF = RF - zCorrection;
+                    RR = RR - zCorrection;
+                    LF = LF + zCorrection;
+                    LR = LR + zCorrection;
+                }
+            }   // end of if currentZ != initZ
+
+            /* Limit that value of the drive motors so that the power does not exceed 100% */
+            RF = Range.clip(RF, -power,power);
+            LF = Range.clip(LF, -power,power);
+            RR = Range.clip(RR, -power,power);
+            LR = Range.clip(LR, -power,power);
+
+            /* Apply power to the drive wheels */
+            newSetDrivePower(RF, LF, LR, RR);
+
+            /* Print data to user screen */
+            opMode.telemetry.addData("Distance = ", distance);
+            opMode.telemetry.addData("Heading = ", heading);
+            opMode.telemetry.addData("Calculated Distance = ", newCalcDistance(heading));
+            opMode.telemetry.update();
+
+            if(newCalcDistance(heading) >= (distance * strafeFactor)) active = false;
+            opMode.idle();
+
+        }   // end of while loop
+
+        newMotorsHalt();
+
+    }   // close newDriveDistance method
+
+
+    /**
+     * Method: calcDistance
+     * @param heading   - indicates the direction the robot is angled/heading
+     */
+    public double newCalcDistance(double heading){
+
+        double distanceTraveled = 0;
+        double strafeFactor = 1;
+
+        double rfEncoder = robot.motorRightFront.getCurrentPosition();
+        double lfEncoder = robot.motorLeftFront.getCurrentPosition();
+        double rrEncoder = robot.motorRightRear.getCurrentPosition();
+        double lrEncoder = robot.motorLeftRear.getCurrentPosition();
+
+        if (heading == 90 || heading == -90){
+            strafeFactor = robot.STRAFE_FACTOR;
+        }
+
+        distanceTraveled = ((Math.abs(rfEncoder) + Math.abs(lfEncoder)
+                    + Math.abs(rrEncoder) + Math.abs(lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
+
+        return Math.abs(distanceTraveled * strafeFactor);
+    }   // close newCalcDistance
+
+    /**
+     * Sets power to all four drive motors
+     * @param rfPower power for right front motor
+     * @param lfPower power for left front motor
+     * @param lrPower power for left rear motor
+     * @param rrPower power for right rear motor
+     */
+    public void newSetDrivePower(double rfPower, double lfPower, double lrPower, double rrPower){
+        robot.motorRightFront.set(rfPower);
+        robot.motorLeftFront.set(lfPower);
+        robot.motorLeftRear.set(lrPower);
+        robot.motorRightRear.set(rrPower);
+    }   // end of the newSetDrivePower method
+
+    /*
+     * Method motorsHalt
+     *  -   stops all drive motors
+     */
+    public void newMotorsHalt(){
+        robot.motorRightFront.set(0);
+        robot.motorLeftFront.set(0);
+        robot.motorLeftRear.set(0);
+        robot.motorRightRear.set(0);
+    }   // end of newMotorsHalt method
+
+
+    /**
+     * Method: newPIDRotate
+     * Parameters:
+     * @param targetAngle -> desire ending angle/position of the robot
+     */
+    public void newPIDRotate(double targetAngle){
+        PIDFController pidf = new PIDFController(robot.LIFT_kP, robot.LIFT_kI, robot.LIFT_kD, robot.LIFT_kF);
+
+        double error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle);
+
+
+        // nested while loops are used to allow for a final check of an overshoot situation
+        while (!pidf.atSetPoint() && opMode.opModeIsActive()) {
+            error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle);
+
+                RF = Range.clip(error, -1, 1);
+                LF = Range.clip(-error, -1, 1);
+                LR = Range.clip(-error, -1, 1);
+                RR = Range.clip(error, -1, 1);
+
+                newSetDrivePower(RF, LF, LR, RR);
+
+        }   // end of while Math.abs(error)
+
+        // shut off the drive motors
+        newMotorsHalt();
+
+    }   //end of the newPIDRotate Method
 
 }   // close the driveMecanum class
