@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -29,10 +30,8 @@ public class HWProfile {
     public DcMotorEx motorRightLift   =   null;
     public DcMotorEx motorLeftLift    =   null;
     public MotorGroup motorsLift;
-
+    public DistanceSensor armSensor =     null;
     public RevIMU imu =                 null;
-
-
     public DcMotor motorLF   = null;
     public DcMotor  motorLR  = null;
     public DcMotor  motorRF     = null;
@@ -159,6 +158,8 @@ public class HWProfile {
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
         servoFinger = hwMap.get(Servo.class, "servoFinger");
 
+        //arm sensor init
+        armSensor = hwMap.get(DistanceSensor.class, "armSensor");
 
         // imu init
         imu = new RevIMU(hwMap);
