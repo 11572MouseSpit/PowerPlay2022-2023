@@ -98,10 +98,7 @@ public class MecanumTeleOp extends LinearOpMode {
             /* Limit the range of the lift so as not to damage the robot */
             targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
-            drive.liftPosition(targetPosition);
-            robot.motorLeftLift.setPower(0.5);
-            robot.motorRightLift.setPower(0.5);
-//            robot.motorsLift.set(0);
+            drive.liftPosition(targetPosition, 0.9);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {

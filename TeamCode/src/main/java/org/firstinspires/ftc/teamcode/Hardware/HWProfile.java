@@ -28,7 +28,6 @@ public class HWProfile {
     public MotorEx motorRightRear   =   null;
     public DcMotorEx motorRightLift   =   null;
     public DcMotorEx motorLeftLift    =   null;
-    public MotorGroup motorsLift;
 
     public RevIMU imu =                 null;
 
@@ -48,6 +47,12 @@ public class HWProfile {
     public final int LIFT_LOW_JUNCTION = 380;
     public final int LIFT_MID_JUNCTION = 600;
     public final int LIFT_MAX_HEIGHT = 900;
+    public final int LIFT_CONE_5 = 155;
+    public final int LIFT_CONE_4 = 100;
+    public final int LIFT_CONE_3 = 75;
+    public final int LIFT_CONE_2 = 30;
+    public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
+
     public final double LIFT_POSITION_TOLERANCE = 10;
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
