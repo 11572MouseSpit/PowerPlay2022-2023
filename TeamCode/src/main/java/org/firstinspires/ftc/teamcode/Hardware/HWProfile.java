@@ -67,7 +67,6 @@ public class HWProfile {
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public HWProfile(){

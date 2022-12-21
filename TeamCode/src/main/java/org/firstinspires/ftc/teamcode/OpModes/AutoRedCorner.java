@@ -1,30 +1,4 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/*
  */
 
 package org.firstinspires.ftc.teamcode.OpModes;
@@ -41,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -56,7 +31,7 @@ import java.util.List;
 
 public class AutoRedCorner extends LinearOpMode {
 
-    /*
+    /**
      * Specify the source for the Tensor Flow Model.
      * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
      * the OpMode must to load it using loadModelFromAsset().  However, if a team generated model
@@ -121,10 +96,10 @@ public class AutoRedCorner extends LinearOpMode {
         robot.init(hardwareMap);
 
 
-        /**
+        /*
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
+         */
         if (tfod != null) {
             tfod.activate();
 
@@ -137,7 +112,7 @@ public class AutoRedCorner extends LinearOpMode {
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
-        /** Wait for the game to begin */
+        /* Wait for the game to begin */
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -162,9 +137,9 @@ public class AutoRedCorner extends LinearOpMode {
                         telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
                         telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        if(recognition.getLabel() == "1 Bolt"){
+                        if(Objects.equals(recognition.getLabel(), "1 Bolt")){
                             position =1;
-                        } else if(recognition.getLabel() == "3 Panel" ){
+                        } else if(Objects.equals(recognition.getLabel(), "3 Panel")){
                             position = 3;
                         } else position = 2;
                     telemetry.update();
@@ -544,7 +519,7 @@ public class AutoRedCorner extends LinearOpMode {
     enum State {
         TEST, DETECT_CONE, SCORE_LOW_JUNCTION, SCORE_LOW_JUNCTION2, CONE_5, CONE_4,
         CONE_3, CONE_2, CONE_1, SCORE_MID_JUNCTION, SCORE_HIGH_JUNCTION, SCORE_HIGH_JUNCTION2,
-        PARK, HALT;
+        PARK, HALT
     }   // end of enum State
 
     /**
