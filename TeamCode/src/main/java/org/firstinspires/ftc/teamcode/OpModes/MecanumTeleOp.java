@@ -4,8 +4,10 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
+import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
 @TeleOp(name = "Teleop Mode", group = "Competition")
 
@@ -20,21 +22,17 @@ public class MecanumTeleOp extends LinearOpMode {
         double r;
         double power=1;
         double rightX, rightY;
-        boolean TSEFlag = false;
         boolean fieldCentric = false;
         int targetPosition = 0;
-        double cupPosition = 0;
+        LinearOpMode opMode = this;
 
-        ElapsedTime currentTime= new ElapsedTime();
-        double buttonPress = currentTime.time();
 
         robot.init(hardwareMap);
 
+        DriveClass drive = new DriveClass(robot, opMode);
+
         telemetry.addData("Ready to Run: ","GOOD LUCK");
         telemetry.update();
-
-        boolean shippingElement=false;
-        boolean armDeployed=false;
 
         waitForStart();
 
@@ -76,30 +74,48 @@ public class MecanumTeleOp extends LinearOpMode {
             }   // end if (gamepad1.x && ...)
 */
 
-            if(gamepad1.dpad_up){
-                robot.servoFinger.setPosition(robot.FINGER_OUT);
-            } else if(gamepad1.dpad_down){
+            /*  LIFT CONTROL  */
+            if(gamepad1.a){
+                targetPosition = robot.LIFT_RESET;
                 robot.servoFinger.setPosition(robot.FINGER_IN);
+            } else if(gamepad1.b){
+                targetPosition = robot.LIFT_LOW_JUNCTION;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
+            } else if(gamepad1.x) {
+                targetPosition = robot.LIFT_MID_JUNCTION;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
+            } else if(gamepad1.y) {
+                targetPosition = robot.LIFT_MAX_HEIGHT;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
             }
-            if(gamepad1.y){
-                robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
-                robot.motorRightLift.set(0.9);
-            } else if (gamepad1.b) {
-                robot.motorsLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
-                robot.motorRightLift.set(0.9);
-            }  else if (gamepad1.a) {
-                robot.motorsLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
-                robot.motorRightLift.set(0.9);
-            } else if (gamepad1.right_trigger>0.1) {
-                robot.motorsLift.setTargetPosition(0);
-                robot.motorsLift.set(0.5);
-            } else if (gamepad1.left_trigger > 0.1) {
-                robot.motorsLift.setTargetPosition(20);
-                robot.motorsLift.set(0.5);
-            } else {
-                robot.motorsLift.set(0);
+
+            if (gamepad1.left_trigger > 0.1){
+                targetPosition = targetPosition + 20;
+            } else if (gamepad1.right_trigger > 0.1) {
+                targetPosition = targetPosition - 20;
             }
-            if(gamepad1.right_bumper){
+
+            /* Limit the range of the lift so as not to damage the robot */
+            targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
+
+            drive.liftPosition(targetPosition);
+            robot.motorLeftLift.setPower(0.5);
+            robot.motorRightLift.setPower(0.5);
+//            robot.motorsLift.set(0);
+
+            /* Claw Control */
+            if(gamepad1.right_bumper) {
+                drive.openClaw();
+            } else if (gamepad1.left_bumper){
+                drive.closeClaw();
+            }
+
+            if(gamepad2.dpad_right){
+                drive.PIDRotate(-90, 2);
+            }
+            if (gamepad2.dpad_left){
+                drive.PIDRotate(90, 2);
+            }            if(gamepad1.right_bumper){
                 robot.servoGrabber.setPosition(0.6);
             }
             if(gamepad1.left_bumper) {

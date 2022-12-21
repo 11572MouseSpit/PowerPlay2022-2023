@@ -52,7 +52,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto: Blue Corner", group = "Concept")
+@Autonomous(name = "Auto: Blue Terminal", group = "Concept")
 
 public class AutoBlueCorner extends LinearOpMode {
 
@@ -199,7 +199,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.newDriveDistance(0.5, -90, 11);
 
                     // raise the lift to place the cone
-                    drive.liftPosition(420);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION);
                     sleep(1000);
 
                     // drive forward to place the cone

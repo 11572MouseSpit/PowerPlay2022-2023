@@ -23,15 +23,9 @@ public class BrokenBot extends LinearOpMode {
         double r;
         double power = 1;
         double rightX, rightY;
-        boolean TSEFlag = false;
         boolean fieldCentric = false;
         int targetPosition = 0;
-        double cupPosition = 0;
         LinearOpMode opMode = this;
-
-
-        ElapsedTime currentTime = new ElapsedTime();
-        double buttonPress = currentTime.time();
 
         robot.init(hardwareMap);
 
@@ -39,6 +33,9 @@ public class BrokenBot extends LinearOpMode {
 
         telemetry.addData("Ready to Run: ", "GOOD LUCK");
         telemetry.update();
+
+        robot.motorRightLift.setTargetPosition(0);
+        robot.motorLeftLift.setTargetPosition(0);
 
         waitForStart();
 
@@ -77,39 +74,47 @@ public class BrokenBot extends LinearOpMode {
             robot.motorRightFront.set(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
             robot.motorLeftRear.set(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
             robot.motorRightRear.set(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
-
+/*
             if(gamepad2.right_bumper){
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
             } else robot.servoFinger.setPosition(robot.FINGER_IN);
 
-            /*if (gamepad1.right_trigger > 0.1&&power < 1) {
+ */
+
+            if (gamepad1.right_trigger > 0.1 && power < 1) {
                 power +=.05;
-            } else if (gamepad1.left_trigger > 0.1&&power > 0) {
+            } else if (gamepad1.left_trigger > 0.1 && power > 0) {
                 power -= 0.5;
-            } */
+            }
 
             /*  LIFT CONTROL  */
             if(gamepad1.a){
                 targetPosition = robot.LIFT_RESET;
+                robot.servoFinger.setPosition(robot.FINGER_IN);
             } else if(gamepad1.b){
                 targetPosition = robot.LIFT_LOW_JUNCTION;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
             } else if(gamepad1.x) {
                 targetPosition = robot.LIFT_MID_JUNCTION;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
             } else if(gamepad1.y) {
                 targetPosition = robot.LIFT_MAX_HEIGHT;
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
             }
 
-            if (gamepad1.dpad_up){
+            if (gamepad1.left_trigger > 0.1){
                 targetPosition = targetPosition + 20;
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.right_trigger > 0.1) {
                 targetPosition = targetPosition - 20;
             }
 
             /* Limit the range of the lift so as not to damage the robot */
-            Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
+            targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
             drive.liftPosition(targetPosition);
-            robot.motorsLift.set(0.9);
+            robot.motorLeftLift.setPower(0.5);
+            robot.motorRightLift.setPower(0.5);
+//            robot.motorsLift.set(0);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {
@@ -118,39 +123,42 @@ public class BrokenBot extends LinearOpMode {
                 drive.closeClaw();
             }
 
-            if(gamepad1.dpad_right){
-                drive.newPIDRotate(-90);
+            if(gamepad2.dpad_right){
+                drive.PIDRotate(-90, 2);
             }
-            if (gamepad1.dpad_left){
-                drive.newPIDRotate(90);
+            if (gamepad2.dpad_left){
+                drive.PIDRotate(90, 2);
             }
             // Provide user feedback
-            telemetry.addData("Left lift position:", robot.motorLeftLift.getCurrentPosition());
-            telemetry.addData("Right lift position:", robot.motorRightLift.getCurrentPosition());
-            telemetry.addData("Motor Left Rear:", robot.motorLeftRear.getCurrentPosition());
-            telemetry.addData("Motor Left Front:", robot.motorLeftFront.getCurrentPosition());
-            telemetry.addData("Motor Right Front:", robot.motorRightFront.getCurrentPosition());
-            telemetry.addData("Motor Right Rear:", robot.motorRightRear.getCurrentPosition());
-            telemetry.addData("IMU Absolute Heading = ", robot.imu.getAbsoluteHeading());
-            telemetry.addData("IMU Heading = ", robot.imu.getHeading());
-            telemetry.addData("IMU Angles? = ", robot.imu.getAngles());
+            telemetry.addData("Target Lift Position: ", targetPosition);
+//            telemetry.addData("Lift Motors positions: ", robot.motorsLift.getPositions());
+            telemetry.addData("Finger Position: ", robot.servoFinger.getPosition());
+            telemetry.addData("Left lift position: ", robot.motorLeftLift.getCurrentPosition());
+            telemetry.addData("Right lift position: ", robot.motorRightLift.getCurrentPosition());
+            telemetry.addData("Motor Left Rear: ", robot.motorLeftRear.getCurrentPosition());
+            telemetry.addData("Motor Left Front: ", robot.motorLeftFront.getCurrentPosition());
+            telemetry.addData("Motor Right Front: ", robot.motorRightFront.getCurrentPosition());
+            telemetry.addData("Motor Right Rear: ", robot.motorRightRear.getCurrentPosition());
+            telemetry.addData("IMU Absolute Heading: ", robot.imu.getAbsoluteHeading());
+            telemetry.addData("IMU Heading: ", robot.imu.getHeading());
+            telemetry.addData("IMU Angles?: ", robot.imu.getAngles());
             if( v1 != 0){
-                telemetry.addData("Motor Left Front = ", v1);
+                telemetry.addData("Motor Left Front: ", v1);
             }
             if( v2 != 0) {
-                telemetry.addData("Motor Right Front = ", v2);
+                telemetry.addData("Motor Right Front: ", v2);
             }
             if(v3 != 0){
-                telemetry.addData("Motor Left Rear = ", v3);
+                telemetry.addData("Motor Left Rear: ", v3);
             }
             if(v4 != 0) {
-                telemetry.addData("Motor Right Rear = ", v4);
+                telemetry.addData("Motor Right Rear: ", v4);
             }
-            telemetry.addData("Left Stick X = ", gamepad1.left_stick_x);
-            telemetry.addData("Left Stick Y = ", gamepad1.left_stick_y);
-            telemetry.addData("Right Stick X = ", gamepad1.right_stick_x);
-            telemetry.addData("Right Stick Y = ", gamepad1.right_stick_y);
-            telemetry.addData("Theta = ", theta);
+            telemetry.addData("Left Stick X: ", gamepad1.left_stick_x);
+            telemetry.addData("Left Stick Y: ", gamepad1.left_stick_y);
+            telemetry.addData("Right Stick X: ", gamepad1.right_stick_x);
+            telemetry.addData("Right Stick Y: ", gamepad1.right_stick_y);
+            telemetry.addData("Theta: ", theta);
             telemetry.update();
 
         }   // end of while(opModeIsActive)

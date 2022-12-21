@@ -5,9 +5,18 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 // test comment from Christopher
 
@@ -17,9 +26,9 @@ public class HWProfile {
     public MotorEx motorRightFront  =   null;
     public MotorEx motorLeftRear    =   null;
     public MotorEx motorRightRear   =   null;
-    public MotorEx motorRightLift   =   null;
-    public MotorEx motorLeftLift    =   null;
-    public MotorGroup motorsLift    =   null;
+    public DcMotorEx motorRightLift   =   null;
+    public DcMotorEx motorLeftLift    =   null;
+    public MotorGroup motorsLift;
 
     public RevIMU imu =                 null;
 
@@ -40,14 +49,14 @@ public class HWProfile {
     public final int LIFT_MID_JUNCTION = 600;
     public final int LIFT_MAX_HEIGHT = 900;
     public final double LIFT_POSITION_TOLERANCE = 10;
-    public final double LIFT_kP = 0.5;
-    public final double LIFT_kI = 0.5;
-    public final double LIFT_kD = 0.5;
-    public final double LIFT_kF = 0.5;
+    public final double LIFT_kP = 0.005;
+    public final double LIFT_kI = 0.005;
+    public final double LIFT_kD = 1.05;
+    public final double LIFT_kF = 0.7;
 
     public final double STRAFE_FACTOR = 1.1;
-    public final double FINGER_OUT = 0.4;
-    public final double FINGER_IN = 0.6;
+    public final double FINGER_IN = 0.4;
+    public final double FINGER_OUT = 0.6;
 
 
 
@@ -128,26 +137,21 @@ public class HWProfile {
         motorRR.setPower(0);
 
 
-        motorLeftLift = new MotorEx(hwMap, "motorLeftLift", Motor.GoBILDA.RPM_117);
-        motorLeftLift.setRunMode(Motor.RunMode.PositionControl);
-        motorLeftLift.setInverted(true);
-        motorLeftLift.setPositionCoefficient(LIFT_kP);
+        motorLeftLift = hwMap.get(DcMotorEx.class, "motorLeftLift");
+        motorLeftLift.setDirection(DcMotorEx.Direction.REVERSE);
+        motorLeftLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftLift.setTargetPosition(0);
-        motorLeftLift.set(0);               // set motor power
-        motorLeftLift.setPositionTolerance(LIFT_POSITION_TOLERANCE);
+        motorLeftLift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLeftLift.setPower(0);               // set motor power
 
-        motorRightLift = new MotorEx(hwMap, "motorLeftLift", Motor.GoBILDA.RPM_117);
-        motorRightLift.setRunMode(Motor.RunMode.PositionControl);
-        motorRightLift.setInverted(false);
-        motorRightLift.setPositionCoefficient(LIFT_kP);
+        motorRightLift = hwMap.get(DcMotorEx.class, "motorRightLift");
+        motorRightLift.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRightLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorRightLift.setTargetPosition(0);
-        motorRightLift.set(0);               // set motor power
-        motorRightLift.setPositionTolerance(LIFT_POSITION_TOLERANCE);
-
-        MotorGroup liftMotors = new MotorGroup(motorLeftLift, motorRightLift);
-        liftMotors.setRunMode(Motor.RunMode.PositionControl);
-        liftMotors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
+        motorRightLift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorRightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRightLift.setPower(0);               // set motor power
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.

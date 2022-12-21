@@ -314,11 +314,6 @@ public class DriveClass {
         return rotationalAngle;
     }   // end method gyro360
 
-    public void liftHigh(){
-        robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
-        robot.motorRightLift.set(0.8);
-
-    }
 
     public void closeClaw(){
         robot.servoGrabber.setPosition(.6);
@@ -329,23 +324,31 @@ public class DriveClass {
     }
 
     public void liftPosition(int liftPosition){
-        robot.motorsLift.setTargetPosition(liftPosition);
-        robot.motorRightLift.set(0.8);
+        robot.motorRightLift.setTargetPosition(liftPosition);
+        robot.motorLeftLift.setTargetPosition(liftPosition);
+        //        robot.motorsLift.setTargetPosition(liftPosition);
+//        robot.motorsLift.set(0.8);
+    }
+
+    public void liftHigh(){
+//        robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
+//        robot.motorsLift.set(0.8);
+
     }
 
     public void liftMid(){
         robot.motorsLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
-        robot.motorRightLift.set(0.8);
+//        robot.motorsLift.set(0.8);
     }
 
     public void liftLow(){
         robot.motorsLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
-        robot.motorRightLift.set(0.8);
+//        robot.motorsLift.set(0.8);
     }
 
     public void resetLift(){
         robot.motorsLift.setTargetPosition(0);
-        robot.motorRightLift.set(0.8);
+//        robot.motorsLift.set(0.8);
     }
 
     /**
@@ -660,10 +663,11 @@ public class DriveClass {
 
         double error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle);
 
+        pidf.setSetPoint(targetAngle);
 
         // nested while loops are used to allow for a final check of an overshoot situation
         while (!pidf.atSetPoint() && opMode.opModeIsActive()) {
-            error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle);
+            error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle)/ 10;
 
                 RF = Range.clip(error, -1, 1);
                 LF = Range.clip(-error, -1, 1);
@@ -671,6 +675,12 @@ public class DriveClass {
                 RR = Range.clip(error, -1, 1);
 
                 newSetDrivePower(RF, LF, LR, RR);
+
+                opMode.telemetry.addData("IMU value: ", robot.imu.getAbsoluteHeading());
+                opMode.telemetry.addData("Error: ", error);
+                opMode.telemetry.addData("Target Angle: ", targetAngle);
+                opMode.telemetry.update();
+
 
         }   // end of while Math.abs(error)
 
