@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
@@ -46,7 +44,7 @@ public class BrokenBot extends LinearOpMode {
              *******************************************/
             if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
                 theta = robot.imu.getAbsoluteHeading() - 90;
-                        //robot.imu.getAngularOrientation().thirdAngle - 90;
+                //robot.imu.getAngularOrientation().thirdAngle - 90;
             } else {
                 theta = 0;      // do not adjust for the angular position of the robot
             }
@@ -74,12 +72,7 @@ public class BrokenBot extends LinearOpMode {
             robot.motorRightFront.set(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
             robot.motorLeftRear.set(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
             robot.motorRightRear.set(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
-/*
-            if(gamepad2.right_bumper){
-                robot.servoFinger.setPosition(robot.FINGER_OUT);
-            } else robot.servoFinger.setPosition(robot.FINGER_IN);
 
- */
 
             if (gamepad1.right_trigger > 0.1 && power < 1) {
                 power +=.05;
@@ -111,10 +104,7 @@ public class BrokenBot extends LinearOpMode {
             /* Limit the range of the lift so as not to damage the robot */
             targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
-            drive.liftPosition(targetPosition);
-            robot.motorLeftLift.setPower(0.5);
-            robot.motorRightLift.setPower(0.5);
-//            robot.motorsLift.set(0);
+            drive.liftPosition(targetPosition, 0.9);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {

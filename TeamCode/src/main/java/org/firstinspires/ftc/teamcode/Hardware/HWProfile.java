@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -29,14 +28,15 @@ public class HWProfile {
     public MotorEx motorRightRear   =   null;
     public DcMotorEx motorRightLift   =   null;
     public DcMotorEx motorLeftLift    =   null;
-    public MotorGroup motorsLift;
-    public DistanceSensor armSensor =     null;
+
     public RevIMU imu =                 null;
+
+
     public DcMotor motorLF   = null;
     public DcMotor  motorLR  = null;
     public DcMotor  motorRF     = null;
     public DcMotor  motorRR    = null;
-//    public DcMotor motorLeftLift = null;
+    //    public DcMotor motorLeftLift = null;
 //    public DcMotor motorRightLift = null;
 //    public BNO055IMU imu = null;
     public Servo servoGrabber = null;
@@ -47,6 +47,12 @@ public class HWProfile {
     public final int LIFT_LOW_JUNCTION = 380;
     public final int LIFT_MID_JUNCTION = 600;
     public final int LIFT_MAX_HEIGHT = 900;
+    public final int LIFT_CONE_5 = 155;
+    public final int LIFT_CONE_4 = 100;
+    public final int LIFT_CONE_3 = 75;
+    public final int LIFT_CONE_2 = 30;
+    public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
+
     public final double LIFT_POSITION_TOLERANCE = 10;
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
@@ -61,7 +67,6 @@ public class HWProfile {
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public HWProfile(){
@@ -158,8 +163,6 @@ public class HWProfile {
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
         servoFinger = hwMap.get(Servo.class, "servoFinger");
 
-        //arm sensor init
-        armSensor = hwMap.get(DistanceSensor.class, "armSensor");
 
         // imu init
         imu = new RevIMU(hwMap);
@@ -167,7 +170,6 @@ public class HWProfile {
 
         /*
         imu = hwMap.get(BNO055IMU.class, "imu");
-
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -176,7 +178,6 @@ public class HWProfile {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
-
          */
 
     }

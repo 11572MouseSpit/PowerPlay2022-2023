@@ -316,39 +316,55 @@ public class DriveClass {
 
 
     public void closeClaw(){
-        robot.servoGrabber.setPosition(.6);
+        robot.servoGrabber.setPosition(0.6);
     }
 
     public void openClaw(){
-        robot.servoGrabber.setPosition(.3);
+        robot.servoGrabber.setPosition(0.3);
     }
 
-    public void liftPosition(int liftPosition){
+    public void fingerExtend() { robot.servoFinger.setPosition(robot.FINGER_OUT);}
+
+    public void fingerRetract() { robot.servoFinger.setPosition(robot.FINGER_IN);}
+
+    public void liftPosition(int liftPosition, double power) {
         robot.motorRightLift.setTargetPosition(liftPosition);
         robot.motorLeftLift.setTargetPosition(liftPosition);
-        //        robot.motorsLift.setTargetPosition(liftPosition);
-//        robot.motorsLift.set(0.8);
+
+        robot.motorRightLift.setPower(power);
+        robot.motorLeftLift.setPower(power);
     }
 
-    public void liftHigh(){
-//        robot.motorsLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
-//        robot.motorsLift.set(0.8);
+    public void liftHigh(double power){
+        robot.motorRightLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
+        robot.motorLeftLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
 
+        robot.motorRightLift.setPower(power);
+        robot.motorLeftLift.setPower(power);
     }
 
-    public void liftMid(){
-        robot.motorsLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
-//        robot.motorsLift.set(0.8);
+    public void liftMid(double power){
+        robot.motorRightLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
+        robot.motorLeftLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
+
+        robot.motorRightLift.setPower(power);
+        robot.motorLeftLift.setPower(power);
     }
 
-    public void liftLow(){
-        robot.motorsLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
-//        robot.motorsLift.set(0.8);
+    public void liftLow(double power){
+        robot.motorRightLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
+        robot.motorLeftLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
+
+        robot.motorRightLift.setPower(power);
+        robot.motorLeftLift.setPower(power);
     }
 
-    public void resetLift(){
-        robot.motorsLift.setTargetPosition(0);
-//        robot.motorsLift.set(0.8);
+    public void resetLift(double power){
+        robot.motorRightLift.setTargetPosition(robot.LIFT_RESET);
+        robot.motorLeftLift.setTargetPosition(robot.LIFT_RESET);
+
+        robot.motorRightLift.setPower(power);
+        robot.motorLeftLift.setPower(power);
     }
 
     /**
@@ -622,7 +638,7 @@ public class DriveClass {
         }
 
         distanceTraveled = ((Math.abs(rfEncoder) + Math.abs(lfEncoder)
-                    + Math.abs(rrEncoder) + Math.abs(lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
+                + Math.abs(rrEncoder) + Math.abs(lrEncoder)) / 4) / (robot.DRIVE_TICKS_PER_INCH);
 
         return Math.abs(distanceTraveled * strafeFactor);
     }   // close newCalcDistance
@@ -669,17 +685,17 @@ public class DriveClass {
         while (!pidf.atSetPoint() && opMode.opModeIsActive()) {
             error = pidf.calculate(robot.imu.getAbsoluteHeading(), targetAngle)/ 10;
 
-                RF = Range.clip(error, -1, 1);
-                LF = Range.clip(-error, -1, 1);
-                LR = Range.clip(-error, -1, 1);
-                RR = Range.clip(error, -1, 1);
+            RF = Range.clip(error, -1, 1);
+            LF = Range.clip(-error, -1, 1);
+            LR = Range.clip(-error, -1, 1);
+            RR = Range.clip(error, -1, 1);
 
-                newSetDrivePower(RF, LF, LR, RR);
+            newSetDrivePower(RF, LF, LR, RR);
 
-                opMode.telemetry.addData("IMU value: ", robot.imu.getAbsoluteHeading());
-                opMode.telemetry.addData("Error: ", error);
-                opMode.telemetry.addData("Target Angle: ", targetAngle);
-                opMode.telemetry.update();
+            opMode.telemetry.addData("IMU value: ", robot.imu.getAbsoluteHeading());
+            opMode.telemetry.addData("Error: ", error);
+            opMode.telemetry.addData("Target Angle: ", targetAngle);
+            opMode.telemetry.update();
 
 
         }   // end of while Math.abs(error)

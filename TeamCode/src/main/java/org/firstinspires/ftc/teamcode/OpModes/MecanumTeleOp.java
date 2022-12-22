@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
@@ -98,10 +97,7 @@ public class MecanumTeleOp extends LinearOpMode {
             /* Limit the range of the lift so as not to damage the robot */
             targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
-            drive.liftPosition(targetPosition);
-            robot.motorLeftLift.setPower(0.5);
-            robot.motorRightLift.setPower(0.5);
-//            robot.motorsLift.set(0);
+            drive.liftPosition(targetPosition, 0.9);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {
