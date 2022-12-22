@@ -169,7 +169,7 @@ public class AutoRedCorner extends LinearOpMode {
                 case SCORE_LOW_JUNCTION:
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(500);
+                    sleep(300);
 
                     // drive forward to place the cone
                     drive.newDriveDistance(0.5, 0, 1);
@@ -178,8 +178,10 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.newDriveDistance(0.5, 90, 12);
 
                     // raise the lift to place the cone
-                    drive.liftPosition(420, 0.9);
-                    sleep(1000);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.9);
+                    drive.fingerExtend();
+//                    sleep(500);
+
 
                     // drive forward to place the cone
                     drive.newDriveDistance(0.5, 0, 1);
@@ -203,13 +205,14 @@ public class AutoRedCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.5, 0, 67);
+                    drive.newDriveDistance(0.7, 0, 60);
 
                     // back into position to pick up the second cone
-                    drive.newDriveDistance(0.5, 180, 8);
+                    drive.newDriveDistance(0.7, 180, 2);
 
                     // turn towards the stack of cones
-                    drive.PIDRotate(-90, 2);
+                    drive.PIDRotate(-90, 1);
+                    drive.PIDRotate(-90, 1);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, 0.9);
@@ -228,32 +231,32 @@ public class AutoRedCorner extends LinearOpMode {
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(1000);
+                    sleep(500);
 
                     // drive to the stack of cones
                     drive.newDriveDistance(0.5, 180, 1);
 
                     // lift the cone off the stack
                     drive.liftLow(0.9);
+                    sleep(400);
                     drive.fingerExtend();
-                    sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 25);
+                    drive.newDriveDistance(0.7, 180, 23);
 
                     autoState = State.SCORE_LOW_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
-                    // strafe towards the 2nd low junction
-                    drive.newDriveDistance(0.5, -90, 15);
-
                     // raise the lift to the low junction
                     drive.fingerExtend();
                     drive.liftLow(0.7);
 
+                    // rotate to the 2nd low junction
+                    drive.PIDRotate(-120, 1);
+
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0.5);
+                    drive.newDriveDistance(0.3, 0, 4);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
@@ -266,8 +269,11 @@ public class AutoRedCorner extends LinearOpMode {
                     // back away from the junction
                     drive.newDriveDistance(0.3, 180, 0);
 
-                    // strafe back into position to pick up another cone
-                    drive.newDriveDistance(0.5, 90, 12);
+                    // back up into position
+                    drive.newDriveDistance(0.5, 180, 3);
+
+                    //rotate towards the cone stack
+                    drive.PIDRotate(-90, 2);
 
                     autoState = State.CONE_4;
                     break;
@@ -297,7 +303,7 @@ public class AutoRedCorner extends LinearOpMode {
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 52);
+                    drive.newDriveDistance(0.5, 180, 18);
                     autoState = State.SCORE_HIGH_JUNCTION;
                     break;
 
