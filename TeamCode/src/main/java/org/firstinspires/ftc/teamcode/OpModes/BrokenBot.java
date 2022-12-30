@@ -99,12 +99,16 @@ public class BrokenBot extends LinearOpMode {
                 targetPosition = targetPosition + 20;
             } else if (gamepad1.right_trigger > 0.1) {
                 targetPosition = targetPosition - 20;
+            } else if (gamepad1.dpad_up) {
+                robot.servoFinger.setPosition(robot.FINGER_OUT);
+            } else if (gamepad1.dpad_down) {
+                robot.servoFinger.setPosition(robot.FINGER_IN);
             }
 
             /* Limit the range of the lift so as not to damage the robot */
             targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
-            drive.liftPosition(targetPosition, 0.9);
+            drive.liftPosition(targetPosition, robot.LIFT_POWER);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {
