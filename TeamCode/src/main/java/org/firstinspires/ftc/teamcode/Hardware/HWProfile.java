@@ -4,10 +4,12 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -30,6 +32,7 @@ public class HWProfile {
     public DcMotorEx motorLeftLift    =   null;
 
     public RevIMU imu =                 null;
+    public DistanceSensor sensorCone;
 
 
     public DcMotor motorLF   = null;
@@ -42,22 +45,28 @@ public class HWProfile {
     public Servo servoGrabber = null;
     public Servo servoFinger = null;
 
+
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LIFT_RESET = 0;
     public final int LIFT_LOW_JUNCTION = 390;
     public final int LIFT_MID_JUNCTION = 650;
-    public final int LIFT_MAX_HEIGHT = 1200;
+    public final int LIFT_HIGH_JUNCTION = 1200;
+    public final int LIFT_MAX_HEIGHT = 1300;
     public final int LIFT_CONE_5 = 155;
     public final int LIFT_CONE_4 = 100;
     public final int LIFT_CONE_3 = 75;
     public final int LIFT_CONE_2 = 30;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
-    public final double LIFT_POWER = 0.75;
+    public final double LIFT_POWER_UP = 0.75;
+    public final double LIFT_POWER_DOWN = 0.35;
     public final double LIFT_POSITION_TOLERANCE = 10;
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
     public final double LIFT_kD = 1.05;
     public final double LIFT_kF = 0.7;
+
+    public final double CLAW_OPEN = 0.3;
+    public final double CLAW_CLOSE = 0.6;
 
     public final double STRAFE_FACTOR = 1.1;
     public final double FINGER_IN = 0.4;
@@ -77,8 +86,6 @@ public class HWProfile {
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
-
-//        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorDistance;
 
         // Define Motors utilizing FTCLib class
         motorLeftFront = new MotorEx(hwMap, "motorLF", Motor.GoBILDA.RPM_312);
@@ -163,6 +170,8 @@ public class HWProfile {
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
         servoFinger = hwMap.get(Servo.class, "servoFinger");
 
+        // init distance sensor
+        sensorCone = hwMap.get(DistanceSensor.class, "sensorCone");
 
         // imu init
         imu = new RevIMU(hwMap);

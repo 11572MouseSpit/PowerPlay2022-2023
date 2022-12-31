@@ -316,11 +316,11 @@ public class DriveClass {
 
 
     public void closeClaw(){
-        robot.servoGrabber.setPosition(0.6);
+        robot.servoGrabber.setPosition(robot.CLAW_CLOSE);
     }
 
     public void openClaw(){
-        robot.servoGrabber.setPosition(0.3);
+        robot.servoGrabber.setPosition(robot.CLAW_OPEN);
     }
 
     public void fingerExtend() { robot.servoFinger.setPosition(robot.FINGER_OUT);}
@@ -330,30 +330,6 @@ public class DriveClass {
     public void liftPosition(int liftPosition, double power) {
         robot.motorRightLift.setTargetPosition(liftPosition);
         robot.motorLeftLift.setTargetPosition(liftPosition);
-
-        robot.motorRightLift.setPower(power);
-        robot.motorLeftLift.setPower(power);
-    }
-
-    public void liftHigh(double power){
-        robot.motorRightLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
-        robot.motorLeftLift.setTargetPosition(robot.LIFT_MAX_HEIGHT);
-
-        robot.motorRightLift.setPower(power);
-        robot.motorLeftLift.setPower(power);
-    }
-
-    public void liftMid(double power){
-        robot.motorRightLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
-        robot.motorLeftLift.setTargetPosition(robot.LIFT_MID_JUNCTION);
-
-        robot.motorRightLift.setPower(power);
-        robot.motorLeftLift.setPower(power);
-    }
-
-    public void liftLow(double power){
-        robot.motorRightLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
-        robot.motorLeftLift.setTargetPosition(robot.LIFT_LOW_JUNCTION);
 
         robot.motorRightLift.setPower(power);
         robot.motorLeftLift.setPower(power);
