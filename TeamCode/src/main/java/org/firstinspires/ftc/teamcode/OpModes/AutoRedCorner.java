@@ -503,6 +503,8 @@ public class AutoRedCorner extends LinearOpMode {
 
 
         } // end of while(opModeIsActive())
+        // End the program
+        requestOpModeStop();
 
     }
 
