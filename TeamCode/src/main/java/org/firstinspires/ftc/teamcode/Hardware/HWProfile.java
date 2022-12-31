@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,7 +30,7 @@ public class HWProfile {
     public MotorEx motorRightRear   =   null;
     public DcMotorEx motorRightLift   =   null;
     public DcMotorEx motorLeftLift    =   null;
-
+    public DistanceSensor armSensor =     null;
     public RevIMU imu =                 null;
 
 
@@ -36,9 +38,6 @@ public class HWProfile {
     public DcMotor  motorLR  = null;
     public DcMotor  motorRF     = null;
     public DcMotor  motorRR    = null;
-    //    public DcMotor motorLeftLift = null;
-//    public DcMotor motorRightLift = null;
-//    public BNO055IMU imu = null;
     public Servo servoGrabber = null;
     public Servo servoFinger = null;
 
@@ -52,13 +51,13 @@ public class HWProfile {
     public final int LIFT_CONE_3 = 75;
     public final int LIFT_CONE_2 = 30;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
-    public final double LIFT_POWER = 0.75;
+    public final double LIFT_POWER = 0.7;
     public final double LIFT_POSITION_TOLERANCE = 10;
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
     public final double LIFT_kD = 1.05;
     public final double LIFT_kF = 0.7;
-
+    public final ElapsedTime elapsedTime  = new ElapsedTime();
     public final double STRAFE_FACTOR = 1.1;
     public final double FINGER_IN = 0.4;
     public final double FINGER_OUT = 0.6;
@@ -163,6 +162,8 @@ public class HWProfile {
         servoGrabber = hwMap.get(Servo.class, "servoGrabber");
         servoFinger = hwMap.get(Servo.class, "servoFinger");
 
+        //arm sensor init
+        armSensor = hwMap.get(DistanceSensor.class, "armSensor");
 
         // imu init
         imu = new RevIMU(hwMap);

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
@@ -102,6 +103,7 @@ public class MecanumTeleOp extends LinearOpMode {
             /* Claw Control */
             if(gamepad1.right_bumper) {
                 drive.openClaw();
+                robot.elapsedTime.reset();
             } else if (gamepad1.left_bumper){
                 drive.closeClaw();
             }
@@ -118,6 +120,11 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.servoGrabber.setPosition(0.3);
             }
 
+            if(robot.armSensor.getDistance(DistanceUnit.CM) <= 5) {
+                if(robot.elapsedTime.seconds() >= 5) {
+                    drive.closeClaw();
+                }
+            }
 
             // Provide user feedback
             telemetry.addData("V1 = ", v1);
