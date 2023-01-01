@@ -19,16 +19,18 @@ import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 public class BrokenBot extends LinearOpMode {
     private final static HWProfile robot = new HWProfile();
     FtcDashboard dashboard;
-    public static double l1_CLAW_OPEN = robot.CLAW_OPEN;
-    public static double l2_CLAW_CLOSE = robot.CLAW_CLOSE;
-    public static int l3_LIFT_JUNCTION_HIGH = robot.LIFT_HIGH_JUNCTION;
-    public static int l4_LIFT_JUNCTION_MID = robot.LIFT_MID_JUNCTION;
-    public static int l5_LIFT_JUNCTION_LOW = robot.LIFT_LOW_JUNCTION;
-    public static int l6_LIFT_POSITION = 0;
-    public static double l7_Lift_Up_Power = robot.LIFT_POWER_UP;
-    public static double l8_Lift_Down_Power = robot.LIFT_POWER_DOWN;
-    public static double l9_Finger_OUT = robot.FINGER_OUT;
+    public static double l01_CLAW_OPEN = robot.CLAW_OPEN;
+    public static double l02_CLAW_CLOSE = robot.CLAW_CLOSE;
+    public static int l03_LIFT_JUNCTION_HIGH = robot.LIFT_HIGH_JUNCTION;
+    public static int l04_LIFT_JUNCTION_MID = robot.LIFT_MID_JUNCTION;
+    public static int l05_LIFT_JUNCTION_LOW = robot.LIFT_LOW_JUNCTION;
+    public static int l06_LIFT_POSITION = 0;
+    public static double l07_Lift_Up_Power = robot.LIFT_POWER_UP;
+    public static double l08_Lift_Down_Power = robot.LIFT_POWER_DOWN;
+    public static double l09_Finger_OUT = robot.FINGER_OUT;
     public static double l10_Finger_IN = robot.FINGER_IN;
+    public static double l11_TARGET_ANGLE = 0;
+    public static double l12_ANGLE_ERROR = 2;
 
     @Override
     public void runOpMode() {
@@ -45,6 +47,7 @@ public class BrokenBot extends LinearOpMode {
         ElapsedTime currentTime = new ElapsedTime();
         double timeStamp =0;
         double liftPower = robot.LIFT_POWER_DOWN;
+        double targetAngle = l11_TARGET_ANGLE;
 
         robot.init(hardwareMap);
 
@@ -108,36 +111,36 @@ public class BrokenBot extends LinearOpMode {
             if(gamepad1.a){
                 targetPosition = robot.LIFT_RESET;
                 robot.servoFinger.setPosition(l10_Finger_IN);
-                liftPower = l8_Lift_Down_Power;
+                liftPower = l08_Lift_Down_Power;
             } else if(gamepad1.b){
-                targetPosition = l5_LIFT_JUNCTION_LOW;
-                robot.servoFinger.setPosition(l9_Finger_OUT);
-                liftPower = l7_Lift_Up_Power;
+                targetPosition = l05_LIFT_JUNCTION_LOW;
+                robot.servoFinger.setPosition(l09_Finger_OUT);
+                liftPower = l07_Lift_Up_Power;
             } else if(gamepad1.x) {
-                targetPosition = l4_LIFT_JUNCTION_MID;
-                robot.servoFinger.setPosition(l9_Finger_OUT);
-                liftPower = l7_Lift_Up_Power;
+                targetPosition = l04_LIFT_JUNCTION_MID;
+                robot.servoFinger.setPosition(l09_Finger_OUT);
+                liftPower = l07_Lift_Up_Power;
             } else if(gamepad1.y) {
-                targetPosition = l3_LIFT_JUNCTION_HIGH;
-                robot.servoFinger.setPosition(l9_Finger_OUT);
-                liftPower = l7_Lift_Up_Power;
+                targetPosition = l03_LIFT_JUNCTION_HIGH;
+                robot.servoFinger.setPosition(l09_Finger_OUT);
+                liftPower = l07_Lift_Up_Power;
             }
 
             if (gamepad1.left_trigger > 0.1){
                 targetPosition = targetPosition + 20;
-                liftPower = l7_Lift_Up_Power;
+                liftPower = l07_Lift_Up_Power;
             } else if (gamepad1.right_trigger > 0.1) {
                 targetPosition = targetPosition - 20;
-                liftPower = l8_Lift_Down_Power;
+                liftPower = l08_Lift_Down_Power;
             } else if (gamepad1.dpad_up) {
-                robot.servoFinger.setPosition(l9_Finger_OUT);
+                robot.servoFinger.setPosition(l09_Finger_OUT);
             } else if (gamepad1.dpad_down) {
                 robot.servoFinger.setPosition(l10_Finger_IN);
             }
 
             if(gamepad2.a){
-                targetPosition = l6_LIFT_POSITION;
-                liftPower = l8_Lift_Down_Power;
+                targetPosition = l06_LIFT_POSITION;
+                liftPower = l08_Lift_Down_Power;
             }
 
             /* Limit the range of the lift so as not to damage the robot */
@@ -150,10 +153,10 @@ public class BrokenBot extends LinearOpMode {
                 detected = true;
             } else detected = false;
             if(gamepad1.right_bumper) {
-                robot.servoGrabber.setPosition(l1_CLAW_OPEN);
+                robot.servoGrabber.setPosition(l01_CLAW_OPEN);
                 timeStamp = currentTime.time();
             } else if ((gamepad1.left_bumper || detected) && (currentTime.time()-timeStamp) > 1){
-                robot.servoGrabber.setPosition(l2_CLAW_CLOSE);
+                robot.servoGrabber.setPosition(l02_CLAW_CLOSE);
             }
 
             if(gamepad2.dpad_right){
@@ -161,6 +164,14 @@ public class BrokenBot extends LinearOpMode {
             }
             if (gamepad2.dpad_left){
                 drive.PIDRotate(90, 2);
+            }
+            if(gamepad2.dpad_up){
+                targetAngle = l11_TARGET_ANGLE;
+                drive.PIDRotate(targetAngle, l12_ANGLE_ERROR);
+            }
+            if(gamepad2.dpad_down){
+                targetAngle = -l11_TARGET_ANGLE;
+                drive.PIDRotate(targetAngle, l12_ANGLE_ERROR);
             }
             // Provide user feedback
             telemetry.addData("Target Lift Position: ", targetPosition);
@@ -196,6 +207,7 @@ public class BrokenBot extends LinearOpMode {
 
 
             // post telemetry to FTC Dashboard as well
+            dashTelemetry.put("00 - BrokenBot Telemetry Data ", "");
             dashTelemetry.put("01 - IMU Angle X = ", robot.imu.getAngles()[0]);
             dashTelemetry.put("02 - IMU Angle Y = ", robot.imu.getAngles()[1]);
             dashTelemetry.put("03 - IMU Angle Z = ", robot.imu.getAngles()[2]);

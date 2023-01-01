@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode.Libs;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -6,12 +9,20 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 
+@Config
 public class DriveClass {
 
     private HWProfile robot;
     public double RF, LF, LR, RR;
     public LinearOpMode opMode;
     ElapsedTime runTime = new ElapsedTime();
+
+    FtcDashboard dashboard;
+    public static double kP = 0.6;
+    public static double kI = 0.0003;
+    public static double kD = 0.0001;
+    public static double maxSpeed = 0.5;
+    public static double minSpeed = 0.21;
 
     /*
      * Constructor method
@@ -51,7 +62,7 @@ public class DriveClass {
         if(runTime.time() >= duration) active = false;
 
         while(opMode.opModeIsActive() && active) {
-            updateValues(action, initZ, theta, currentZ, zCorrection);
+//            updateValues(action, initZ, theta, currentZ, zCorrection);
 
             RF = power * (Math.sin(theta) + Math.cos(theta));
             LF = power * (Math.sin(theta) - Math.cos(theta));
@@ -179,11 +190,13 @@ public class DriveClass {
              * Apply power to the drive wheels
              */
             setDrivePower(RF, LF, LR, RR);
+            /*
             opMode.telemetry.addData("LF Start = ", lfStart);
             opMode.telemetry.addData("Distance = ", distance);
             opMode.telemetry.addData("Heading = ", heading);
             opMode.telemetry.addData("Calculated Distance = ", calcDistance(heading, rfStart, rrStart, lfStart, lrStart));
             opMode.telemetry.update();
+             */
 
             if(calcDistance(heading, rfStart, rrStart, lfStart, lrStart) >= (distance * strafeFactor)) active = false;
             opMode.idle();
@@ -202,17 +215,26 @@ public class DriveClass {
      */
     public void PIDRotate(double targetAngle, double targetError){
         double integral = 0;
-        int iterations = 0;
         ElapsedTime timeElapsed = new ElapsedTime();
         double startTime = timeElapsed.time();
         double totalTime;
         double error;
-        double Cp = 0.06;
-        double Ci = 0.0003;
-        double Cd = 0.0001;
-        double maxSpeed = 0.5;
+        double Cp = 0.006;
+        double Ci = 0.003;
+        double Cd = 0.00004;
+        /* enable these for tuning
+        double Cp = kP;
+        double Ci = kI;
+        double Cd = kD;
+        double maxRotateSpeed = maxSpeed;
+        double maxRotateSpeed = minSpeed;
+         */
+        double minRotateSpeed = 0.18;
+        double maxRotateSpeed = 1;
         double rotationSpeed;
-        double derivative = 0, deltaError, lastError=0;
+        double derivative = 0, lastError=0;
+        dashboard = FtcDashboard.getInstance();
+        TelemetryPacket dashTelemetry = new TelemetryPacket();
 
         // check to see how far the robot is rotating to decide which gyro sensor value to use
         if(targetAngle > 90 || targetAngle < -90){
@@ -224,16 +246,17 @@ public class DriveClass {
         // nested while loops are used to allow for a final check of an overshoot situation
         while ((Math.abs(error) >= targetError) && opMode.opModeIsActive()) {
             while ((Math.abs(error) >= targetError) && opMode.opModeIsActive()) {
-                deltaError = lastError - error;
-                rotationSpeed = ((Cp * error) + (Ci * integral) + (Cd * derivative)) * maxSpeed;
+                derivative = lastError - error;
+                rotationSpeed = ((Cp * error) + (Ci * integral) + (Cd * derivative));
+                lastError = error;
 
                 // Clip motor speed
-                rotationSpeed = Range.clip(rotationSpeed, -maxSpeed, maxSpeed);
+                rotationSpeed = Range.clip(rotationSpeed, -maxRotateSpeed, maxRotateSpeed);
 
                 if ((rotationSpeed > -0.25) && (rotationSpeed < 0)) {
-                    rotationSpeed = -0.21;
+                    rotationSpeed = -minRotateSpeed;
                 } else if ((rotationSpeed < 0.25) && (rotationSpeed > 0)) {
-                    rotationSpeed = 0.21;
+                    rotationSpeed = minRotateSpeed;
                 }
 
                 RF = rotationSpeed;
@@ -243,20 +266,7 @@ public class DriveClass {
 
                 setDrivePower(RF, LF, LR, RR);
 
-                lastError = error;
-                iterations++;
-
-                opMode.telemetry.addData("InitZ/targetAngle value  = ", targetAngle);
-                opMode.telemetry.addData("Current Angle  = ", getZAngle());
-                opMode.telemetry.addData("Theta/lastError Value= ", lastError);
-                opMode.telemetry.addData("CurrentZ/Error Value = ", error);
-                opMode.telemetry.addData("zCorrection/derivative Value = ", derivative);
-
-                opMode.telemetry.addData("Right Front = ", RF);
-                opMode.telemetry.addData("Left Front = ", LF);
-                opMode.telemetry.addData("Left Rear = ", LR);
-                opMode.telemetry.addData("Right Rear = ", RR);
-                opMode.telemetry.update();
+                opMode.idle();
 
                 // check to see how far the robot is rotating to decide which gyro sensor value to use
                 if (targetAngle > 90 || targetAngle < -90) {
@@ -266,7 +276,10 @@ public class DriveClass {
                 }
 
             }   // end of while Math.abs(error)
-            motorsHalt();
+            setDrivePower(0,0,0,0);
+            maxRotateSpeed = maxRotateSpeed / 2;
+            opMode.sleep(10);
+//            opMode.idle();
 
             // Perform a final calc on the error to confirm that the robot didn't overshoot the
             // target position after the last measurement was taken.
@@ -274,7 +287,8 @@ public class DriveClass {
             if (targetAngle > 90 || targetAngle < -90) {
                 error = gyro360(targetAngle) - targetAngle;
             } else {
-                error = getZAngle() - targetAngle;
+                error = -robot.imu.getAngles()[0] - targetAngle;
+//                error = getZAngle() - targetAngle;
             }
         }
 
@@ -282,10 +296,21 @@ public class DriveClass {
         motorsHalt();
 
         totalTime = timeElapsed.time() - startTime;
-        opMode.telemetry.addData("Iterations = ", iterations);
-        opMode.telemetry.addData("Final Angle = ", getZAngle());
-        opMode.telemetry.addData("Total Time Elapsed = ", totalTime);
-        opMode.telemetry.update();
+        // post telemetry to FTC Dashboard
+        dashTelemetry.put("p00 - PIDTurn Telemetry Data", "");
+        dashTelemetry.put("p01 - PID IMU Angle X                  = ", robot.imu.getAngles()[0]);
+        dashTelemetry.put("p02 - PID IMU Angle Y                  = ", robot.imu.getAngles()[1]);
+        dashTelemetry.put("p03 - PID IMU Angle Z                  = ", robot.imu.getAngles()[2]);
+        dashTelemetry.put("p04 - InitZ/targetAngle value      = ", targetAngle);
+        dashTelemetry.put("p05 - Current Angle                = ", getZAngle());
+        dashTelemetry.put("p06 - Angle Error                  = ", error);
+        dashTelemetry.put("p07 - zCorrection/derivative Value = ", derivative);
+        dashTelemetry.put("p08 - Turn Time                    = ", totalTime);
+        dashTelemetry.put("p09 - Right Front                  = ", RF);
+        dashTelemetry.put("p10 - Right Rear                   = ", RR);
+        dashTelemetry.put("p11 - Left Front                   = ", LF);
+        dashTelemetry.put("p12 - Right Rear                   = ", RR);
+        dashboard.sendTelemetryPacket(dashTelemetry);
     }   //end of the PIDRotate Method
 
     /**
@@ -579,11 +604,12 @@ public class DriveClass {
             /* Apply power to the drive wheels */
             newSetDrivePower(RF, LF, LR, RR);
 
-            /* Print data to user screen */
+            /* Print data to user screen
             opMode.telemetry.addData("Distance = ", distance);
             opMode.telemetry.addData("Heading = ", heading);
             opMode.telemetry.addData("Calculated Distance = ", newCalcDistance(heading));
             opMode.telemetry.update();
+             */
 
             if(newCalcDistance(heading) >= (distance * strafeFactor)) active = false;
             opMode.idle();
@@ -668,10 +694,12 @@ public class DriveClass {
 
             newSetDrivePower(RF, LF, LR, RR);
 
+            /*
             opMode.telemetry.addData("IMU value: ", robot.imu.getAbsoluteHeading());
             opMode.telemetry.addData("Error: ", error);
             opMode.telemetry.addData("Target Angle: ", targetAngle);
             opMode.telemetry.update();
+             */
 
 
         }   // end of while Math.abs(error)
