@@ -3,6 +3,8 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -27,39 +29,23 @@ import java.util.Objects;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto: Red Corner", group = "Concept")
+@Autonomous(name = "Auto: Red Terminal", group = "Concept")
 
 public class AutoRedCorner extends LinearOpMode {
 
-    /**
-     * Specify the source for the Tensor Flow Model.
-     * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
-     * the OpMode must to load it using loadModelFromAsset().  However, if a team generated model
-     * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
-     * Here we assume it's an Asset.    Also see method initTfod() below .
-     */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+    FtcDashboard dashboard;
+
+    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
 
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "circle",
+            "star",
+            "triangle"
     };
 
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
     private static final String VUFORIA_KEY =
             "AfHl2GP/////AAABmeJc93xOhk1MvZeKbP5E43taYJ6kodzkhsk5wOLGwZI3wxf7v1iTx2Mem/VZSEtpxb3U2fMO7n0EUxSeHRWhOXeX16dMFcjfalezjo3ZkzBuG/y2r4kgLwKs4APyAIClBAon+tf/W/4NkTkYuHGo8zZ0slH/iBpqxvblpNURsG5h4VxPFgF5D/FIfmjnddzQpa4cGarle/Zvuah6q2orUswun31P6ZLuIJvdOIQf7o/ruoRygsSXfVYc35w+Xwm+bwjpZUNzHHYvRNrp0HNWC3Fr2hd0TqWKIIYlCoHj0m5OKX22Ris23V8PdKM/i4/ZIy8JewJXetv1rERC5bfHmUXCS4Rl7RjR+ZscQ5aA0nr8";
 
@@ -74,7 +60,7 @@ public class AutoRedCorner extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-    double position = 2;
+    double position = 3;
     private final static HWProfile robot = new HWProfile();
     private LinearOpMode opMode = this;
 
@@ -95,6 +81,8 @@ public class AutoRedCorner extends LinearOpMode {
 
         robot.init(hardwareMap);
 
+        dashboard = FtcDashboard.getInstance();
+        TelemetryPacket dashTelemetry = new TelemetryPacket();
 
         /*
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -108,7 +96,7 @@ public class AutoRedCorner extends LinearOpMode {
             // If your target is at distance greater than 50 cm (20") you can increase the magnification value
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9)
+            // (typically 16/9).
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
@@ -135,34 +123,39 @@ public class AutoRedCorner extends LinearOpMode {
 
                         telemetry.addData(""," ");
                         telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
+                        telemetry.addData("Park Position = ", position);
                         telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        if(Objects.equals(recognition.getLabel(), "1 Bolt")){
+                        if(Objects.equals(recognition.getLabel(), "circle")){
                             position =1;
-                        } else if(Objects.equals(recognition.getLabel(), "3 Panel")){
-                            position = 3;
-                        } else position = 2;
+                        } else if(Objects.equals(recognition.getLabel(), "triangle")){
+                            position = 2;
+                        } else position = 3;
+
+                        dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
+                        dashTelemetry.put("Image             : ", recognition.getLabel());
+                        dashTelemetry.put("Position          : ", position);
+                        dashTelemetry.put("Confidence        : ", recognition.getConfidence() * 100 );
+                        dashboard.sendTelemetryPacket(dashTelemetry);
                         telemetry.update();
                     }
                 }
             }
-
         }  // end of while
-
-        waitForStart();
 
         while(opModeIsActive()){
 
             switch (autoState) {
                 case TEST:
-                    drive.liftHigh(0.9);
+                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
                     sleep(3000);
                     //                    drive.driveDistance(.5, -90, 20);
                     autoState = State.HALT;
-
                     break;
 
                 case DETECT_CONE:
+                    telemetry.addData("PARK POSITION = ", position);
+                    telemetry.update();
                     autoState = State.SCORE_LOW_JUNCTION;
                     break;
 
@@ -171,51 +164,48 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.closeClaw();
                     sleep(300);
 
-                    // drive forward to place the cone
-                    drive.newDriveDistance(0.5, 0, 1);
-
-                    // strafe over to scoring position
-                    drive.newDriveDistance(0.5, 90, 12);
-
                     // raise the lift to place the cone
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.9);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
-//                    sleep(500);
-
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.5, 0, 1);
+                    drive.newDriveDistance(0.3, 0, 4);
 
-                    // Lower the lift to place the cone
-                    drive.resetLift(0.5);
-                    sleep(500);
+                    // turn towards the low junction
+                    drive.PIDRotate(45, 2);
+
+                    // drive forward to place the cone
+                    drive.newDriveDistance(0.3, 0, 2);
+
+                    // release the cone
                     drive.openClaw();
 
-                    // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 4);
+                    // drive back to head towards the cone stack
+                    drive.newDriveDistance(0.3, 180, 2);
 
-                    //strafe back to starting position
-                    drive.newDriveDistance(0.5, -90, 12);
-
-                    // realign towards the signal cone
+                    // point in the right direction
                     drive.PIDRotate(0, 2);
-                    autoState = State.CONE_5;
 
+                    // Lower the lift to place the cone
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
+                    drive.fingerRetract();
+
+                    autoState = State.CONE_5;
                     break;
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.7, 0, 60);
+                    drive.newDriveDistance(0.6, 0, 51);
+
+                    // raise the lift to collect a cone
+                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
 
                     // back into position to pick up the second cone
-                    drive.newDriveDistance(0.7, 180, 2);
+                    drive.newDriveDistance(0.4, 180, 1);
 
                     // turn towards the stack of cones
                     drive.PIDRotate(-90, 1);
                     drive.PIDRotate(-90, 1);
-
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_5, 0.9);
 
                     // open the claw to grab the cone
                     drive.openClaw();
@@ -227,50 +217,49 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.PIDRotate(-90, 2);
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 11);
+                    drive.newDriveDistance(0.5, 0, 7);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(500);
+                    sleep(300);
 
                     // drive to the stack of cones
                     drive.newDriveDistance(0.5, 180, 1);
 
                     // lift the cone off the stack
-                    drive.liftLow(0.9);
-                    sleep(400);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(200);
                     drive.fingerExtend();
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.7, 180, 23);
+                    drive.newDriveDistance(0.7, 180, 21);
 
                     autoState = State.SCORE_LOW_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
                     // raise the lift to the low junction
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(200);
                     drive.fingerExtend();
-                    drive.liftLow(0.7);
 
                     // rotate to the 2nd low junction
-                    drive.PIDRotate(-120, 1);
+                    drive.PIDRotate(-130, 1);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 4);
-
-                    // lower the lift to place the cone
-                    drive.fingerRetract();
-                    drive.resetLift(0.5);
-                    sleep(300);
+                    drive.newDriveDistance(0.3, 0, 6);
 
                     // open the claw to release the cone
                     drive.openClaw();
+                    drive.fingerRetract();
+                    sleep(100);
+
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 0);
-
-                    // back up into position
                     drive.newDriveDistance(0.5, 180, 3);
+
+                    // lower the lift to collect the next cone
+                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     //rotate towards the cone stack
                     drive.PIDRotate(-90, 2);
@@ -279,61 +268,60 @@ public class AutoRedCorner extends LinearOpMode {
                     break;
 
                 case CONE_4:
-                    //Todo: Test this section of code
-                    // It may be necessary to set the previous state back to PARK if this section
-                    // isn't tested.
-
-
                     // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_4, 0.9);
+                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 25);
+                    drive.newDriveDistance(0.5, 0, 22);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(1000);
+                    sleep(300);
+
+                    // drive to the stack of cones
+                    drive.newDriveDistance(0.3, 180, 1);
 
                     // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.9);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 18);
+                    drive.newDriveDistance(0.5, 180, 19);
                     autoState = State.SCORE_HIGH_JUNCTION;
                     break;
 
                 case SCORE_HIGH_JUNCTION:
                     // rotate towards the high junction
-                    drive.PIDRotate(30, 2);
+                    drive.PIDRotate(40, 2);
 
                     // raise the lift to the high junction
-                    drive.liftHigh(0.9);
-                    sleep(500);
+                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(400);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0);
+                    drive.newDriveDistance(0.3, 0, 2);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
                     sleep(100);
-                    drive.resetLift(0.5);
-                    sleep(500);
 
                     // open the claw to release the cone
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 0);
+                    drive.newDriveDistance(0.3, 180, 2);
+                    sleep(300);
 
                     // rotate back towards the cone stack
                     drive.PIDRotate(-90,2);
+                    sleep(300);
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
 
-                    autoState = State.CONE_3;
+                    autoState = State.PARK;
                     break;
 
                 case CONE_3:
@@ -346,7 +334,7 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.PIDRotate(-90,2);
 
                     // Set the lift to the right heigth to grab the next cone
-                    drive.liftPosition(robot.LIFT_CONE_3, 0.9);
+                    drive.liftPosition(robot.LIFT_CONE_3, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
 
                     // drive forward to pick up another cone
@@ -360,9 +348,9 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.newDriveDistance(0.4, 180, 1);
 
                     // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.9);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(300);
                     drive.fingerExtend();
-                    sleep(500);
 
                     // back away from the stack of cones
                     drive.newDriveDistance(0.5, 180, 24);
@@ -378,7 +366,7 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.PIDRotate(135, 2);
 
                     // raise the lift to the mid junction
-                    drive.liftMid(0.9);
+                    drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
                     sleep(500); // allow the robot to reach scoring position
 
@@ -388,7 +376,7 @@ public class AutoRedCorner extends LinearOpMode {
                     // lower the lift to place the cone
                     drive.fingerRetract();
                     sleep(100);
-                    drive.resetLift(0.5);
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
                     sleep(500);
 
                     // open the claw to release the cone
@@ -445,9 +433,9 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.PIDRotate(-135, 2);
 
                     // raise the lift to the mid junction
-                    drive.liftHigh(0.9);
+                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(300); // allow the robot to reach scoring position
                     drive.fingerExtend();
-                    sleep(500); // allow the robot to reach scoring position
 
                     // drive towards the low junction to place the cone
                     drive.newDriveDistance(0.3, 0, 0);
@@ -455,7 +443,7 @@ public class AutoRedCorner extends LinearOpMode {
                     // lower the lift to place the cone
                     drive.fingerRetract();
                     sleep(100);
-                    drive.resetLift(0.5);
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
                     sleep(500);
 
                     // open the claw to release the cone
@@ -475,15 +463,15 @@ public class AutoRedCorner extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.5, 0,48);
+                        drive.newDriveDistance(0.3, 0,28);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 0,20);
+                        drive.newDriveDistance(0.3, 0,0);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.3, 0, 2);
+                        drive.newDriveDistance(0.3, 180, 22);
                     }
 
                     autoState = State.HALT;
@@ -503,6 +491,8 @@ public class AutoRedCorner extends LinearOpMode {
 
 
         } // end of while(opModeIsActive())
+        // End the program
+        requestOpModeStop();
 
     }
 

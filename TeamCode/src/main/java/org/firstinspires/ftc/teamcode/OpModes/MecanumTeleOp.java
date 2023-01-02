@@ -25,6 +25,7 @@ public class MecanumTeleOp extends LinearOpMode {
         boolean fieldCentric = false;
         int targetPosition = 0;
         LinearOpMode opMode = this;
+        double liftPower = robot.LIFT_POWER_DOWN;
 
 
         robot.init(hardwareMap);
@@ -78,27 +79,33 @@ public class MecanumTeleOp extends LinearOpMode {
             if(gamepad1.a){
                 targetPosition = robot.LIFT_RESET;
                 robot.servoFinger.setPosition(robot.FINGER_IN);
+                liftPower = robot.LIFT_POWER_DOWN;
             } else if(gamepad1.b){
                 targetPosition = robot.LIFT_LOW_JUNCTION;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
+                liftPower = robot.LIFT_POWER_UP;
             } else if(gamepad1.x) {
                 targetPosition = robot.LIFT_MID_JUNCTION;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
+                liftPower = robot.LIFT_POWER_UP;
             } else if(gamepad1.y) {
                 targetPosition = robot.LIFT_MAX_HEIGHT;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
+                liftPower = robot.LIFT_POWER_UP;
             }
 
             if (gamepad1.left_trigger > 0.1){
                 targetPosition = targetPosition + 20;
+                liftPower = robot.LIFT_POWER_UP;
             } else if (gamepad1.right_trigger > 0.1) {
                 targetPosition = targetPosition - 20;
+                liftPower = robot.LIFT_POWER_DOWN;
             }
 
             /* Limit the range of the lift so as not to damage the robot */
             targetPosition = Range.clip(targetPosition, robot.LIFT_RESET, robot.LIFT_MAX_HEIGHT);
 
-            drive.liftPosition(targetPosition, robot.LIFT_POWER);
+            drive.liftPosition(targetPosition, liftPower);
 
             /* Claw Control */
             if(gamepad1.right_bumper) {
