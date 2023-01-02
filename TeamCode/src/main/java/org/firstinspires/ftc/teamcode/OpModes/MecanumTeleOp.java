@@ -111,8 +111,8 @@ public class MecanumTeleOp extends LinearOpMode {
 
             /* Claw Control */
             if(gamepad1.right_bumper) {
-                drive.openClaw();
                 elapsedTime.reset();
+                drive.openClaw();
             } else if (gamepad1.left_bumper){
                 drive.closeClaw();
             }
@@ -122,21 +122,23 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             if (gamepad2.dpad_left){
                 drive.PIDRotate(90, 2);
-            }            if(gamepad1.right_bumper){
-                robot.servoGrabber.setPosition(0.6);
             }
+            /*
             if(gamepad1.left_bumper) {
                 robot.servoGrabber.setPosition(0.3);
             }
 
+             */
+
             if(robot.sensorCone.getDistance(DistanceUnit.CM) <= 5) {
-                if(elapsedTime.seconds() >= 5) {
+                if(elapsedTime.time() >= 5) {
                     drive.closeClaw();
                 }
             }
 
             // Provide user feedback
             telemetry.addData("V1 = ", v1);
+            telemetry.addData("elapsed time = ", elapsedTime.time());
             telemetry.addData("V2 = ", v2);
             telemetry.addData("V3 = ", v3);
             telemetry.addData("V4 = ", v4);
