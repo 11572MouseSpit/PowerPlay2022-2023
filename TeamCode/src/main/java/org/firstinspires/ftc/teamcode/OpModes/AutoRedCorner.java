@@ -42,8 +42,8 @@ public class AutoRedCorner extends LinearOpMode {
 
     private static final String[] LABELS = {
             "circle",
-            "triangle",
-            "star"
+            "star",
+            "triangle"
     };
 
     private static final String VUFORIA_KEY =
@@ -127,10 +127,10 @@ public class AutoRedCorner extends LinearOpMode {
                         telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         if(Objects.equals(recognition.getLabel(), "circle")){
-                            position =2;
+                            position =1;
                         } else if(Objects.equals(recognition.getLabel(), "triangle")){
-                            position = 3;
-                        } else position = 1;
+                            position = 2;
+                        } else position = 3;
 
                         dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
                         dashTelemetry.put("Image             : ", recognition.getLabel());
@@ -141,7 +141,6 @@ public class AutoRedCorner extends LinearOpMode {
                     }
                 }
             }
-
         }  // end of while
 
         while(opModeIsActive()){

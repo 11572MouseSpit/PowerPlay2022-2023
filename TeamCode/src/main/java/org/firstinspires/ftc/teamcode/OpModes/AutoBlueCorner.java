@@ -35,14 +35,15 @@ public class AutoBlueCorner extends LinearOpMode {
 
     FtcDashboard dashboard;
 
-    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
+    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
 //    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
 
     private static final String[] LABELS = {
-            "logo",
-            "mouse",
-            "qrocde"
+            "circle",
+            "star",
+            "triangle"
     };
 
     private static final String VUFORIA_KEY =
@@ -122,19 +123,20 @@ public class AutoBlueCorner extends LinearOpMode {
 
                         telemetry.addData(""," ");
                         telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
+                        telemetry.addData("Park Position = ", position);
                         telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        if(Objects.equals(recognition.getLabel(), "qrcode")){
-                            position =2;
-                        } else if(Objects.equals(recognition.getLabel(), "logo")){
-                            position = 3;
-                        } else position = 1;
+                        if(Objects.equals(recognition.getLabel(), "circle")){
+                            position =1;
+                        } else if(Objects.equals(recognition.getLabel(), "triangle")){
+                            position = 2;
+                        } else position = 3;
 
                         dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
                         dashTelemetry.put("Image             : ", recognition.getLabel());
+                        dashTelemetry.put("Position          : ", position);
                         dashTelemetry.put("Confidence        : ", recognition.getConfidence() * 100 );
                         dashboard.sendTelemetryPacket(dashTelemetry);
-
                         telemetry.update();
                     }
                 }
