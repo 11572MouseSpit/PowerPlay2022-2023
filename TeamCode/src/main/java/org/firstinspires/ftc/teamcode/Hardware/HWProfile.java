@@ -44,16 +44,17 @@ public class HWProfile {
 //    public BNO055IMU imu = null;
     public Servo servoGrabber = null;
     public Servo servoFinger = null;
+//    public final DistanceSensor armSensor = null;
 
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LIFT_RESET = 0;
     public final int LIFT_LOW_JUNCTION = 310;
     public final int LIFT_MID_JUNCTION = 600;
-    public final int LIFT_HIGH_JUNCTION = 1200;
+    public final int LIFT_HIGH_JUNCTION = 1150;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 145;
-    public final int LIFT_CONE_4 = 120;
+    public final int LIFT_CONE_5 = 135;
+    public final int LIFT_CONE_4 = 110;
     public final int LIFT_CONE_3 = 95;
     public final int LIFT_CONE_2 = 60;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
@@ -64,10 +65,10 @@ public class HWProfile {
     public final double LIFT_kI = 0.005;
     public final double LIFT_kD = 1.05;
     public final double LIFT_kF = 0.7;
-
+    public final double WAIT_DRIVE_TO_CONE = 1;
     public final double CLAW_OPEN = 0.3;
     public final double CLAW_CLOSE = 0.6;
-
+    public final double DRIVE_TO_CONE_POWER = 0.2;
     public final double STRAFE_FACTOR = 1.1;
     public final double FINGER_IN = 0.4;
     public final double FINGER_OUT = 0.6;

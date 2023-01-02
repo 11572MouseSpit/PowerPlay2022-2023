@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -26,6 +27,7 @@ public class MecanumTeleOp extends LinearOpMode {
         int targetPosition = 0;
         LinearOpMode opMode = this;
         double liftPower = robot.LIFT_POWER_DOWN;
+        ElapsedTime elapsedTime = new ElapsedTime();
 
 
         robot.init(hardwareMap);
@@ -110,7 +112,7 @@ public class MecanumTeleOp extends LinearOpMode {
             /* Claw Control */
             if(gamepad1.right_bumper) {
                 drive.openClaw();
-                robot.elapsedTime.reset();
+                elapsedTime.reset();
             } else if (gamepad1.left_bumper){
                 drive.closeClaw();
             }
@@ -127,8 +129,8 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.servoGrabber.setPosition(0.3);
             }
 
-            if(robot.armSensor.getDistance(DistanceUnit.CM) <= 5) {
-                if(robot.elapsedTime.seconds() >= 5) {
+            if(robot.sensorCone.getDistance(DistanceUnit.CM) <= 5) {
+                if(elapsedTime.seconds() >= 5) {
                     drive.closeClaw();
                 }
             }

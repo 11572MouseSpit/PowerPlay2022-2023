@@ -105,7 +105,7 @@ public class AutoBlueCorner extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
-        while(!opModeIsActive()) {
+        while(!opModeIsActive() && !isStopRequested()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
