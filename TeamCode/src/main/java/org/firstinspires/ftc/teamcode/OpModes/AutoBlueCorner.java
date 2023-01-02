@@ -155,56 +155,59 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case DETECT_CONE:
+                    telemetry.addData("PARK POSITION = ", position);
+                    telemetry.update();
                     autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION;
                     break;
 
                 case SCORE_LOW_JUNCTION:
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(500);
-                    // strafe over to scoring position
-                    drive.newDriveDistance(0.5, -90, 11);
+                    sleep(300);
 
                     // raise the lift to place the cone
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(1000);
                     drive.fingerExtend();
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.5, 0, 4);
+                    drive.newDriveDistance(0.3, 0, 4);
 
-                    // Lower the lift to place the cone
-                    drive.fingerRetract();
-                    sleep(200);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    sleep(500);
+                    // turn towards the low junction
+                    drive.PIDRotate(-45, 2);
+
+                    // drive forward to place the cone
+                    drive.newDriveDistance(0.3, 0, 2);
+
+                    // release the cone
                     drive.openClaw();
 
-                    // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 4);
+                    // drive back to head towards the cone stack
+                    drive.newDriveDistance(0.3, 180, 2);
 
-                    //strafe back to starting position
-                    drive.newDriveDistance(0.5, 90, 12);
-
-                    // realign towards the signal cone
+                    // point in the right direction
                     drive.PIDRotate(0, 2);
+
+                    // Lower the lift to place the cone
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
+                    drive.fingerRetract();
+
                     autoState = AutoBlueCorner.State.CONE_5;
 
                     break;
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.5, 0, 67);
-
-                    // back into position to pick up the second cone
-                    drive.newDriveDistance(0.5, 180, 8);
-
-                    // turn towards the stack of cones
-                    drive.PIDRotate(90,2);
+                    drive.newDriveDistance(0.6, 0, 51);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
+
+                    // back into position to pick up the second cone
+                    drive.newDriveDistance(0.4, 180, 1);
+
+                    // turn towards the stack of cones
+                    drive.PIDRotate(90, 1);
+                    drive.PIDRotate(90, 1);
 
                     // open the claw to grab the cone
                     drive.openClaw();
@@ -216,59 +219,57 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.PIDRotate(90, 2);
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 12);
+                    drive.newDriveDistance(0.5, 0, 7);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(1000);
+                    sleep(300);
 
-                    //drive back an inch or so
-                    drive.newDriveDistance(0.4, 180, 1);
+                    // drive to the stack of cones
+                    drive.newDriveDistance(0.5, 180, 1);
+
                     // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(200);
                     drive.fingerExtend();
-                    sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 25);
+                    drive.newDriveDistance(0.7, 180, 21);
 
                     autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
-                    // strafe towards the 2nd low junction
-                    drive.newDriveDistance(0.5, 90, 14);
-
                     // raise the lift to the low junction
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(500);
+                    sleep(200);
+                    drive.fingerExtend();
+
+                    // rotate to the 2nd low junction
+                    drive.PIDRotate(130, 1);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 3);
-
-                    // lower the lift to place the cone
-                    drive.fingerRetract();
-                    sleep(100);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    sleep(200);
+                    drive.newDriveDistance(0.3, 0, 6);
 
                     // open the claw to release the cone
                     drive.openClaw();
+                    drive.fingerRetract();
+                    sleep(100);
+
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 4);
+                    drive.newDriveDistance(0.5, 180, 3);
 
-                    // strafe back into position to pick up another cone
-                    drive.newDriveDistance(0.5, -90, 12);
+                    // lower the lift to collect the next cone
+                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
+
+                    //rotate towards the cone stack
+                    drive.PIDRotate(90, 2);
 
                     autoState = State.CONE_4;
                     break;
 
                 case CONE_4:
-                    //Todo: Test this section of code
-                    // It may be necessary to set the previous state back to PARK if this section
-                    // isn't tested.
-
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
 
@@ -276,54 +277,54 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 25);
+                    drive.newDriveDistance(0.5, 0, 22);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(1000);
+                    sleep(300);
 
-                    // back away from the stack slightly
-                    drive.newDriveDistance(0.4, 180, 1);
+                    // drive to the stack of cones
+                    drive.newDriveDistance(0.3, 180, 1);
+
                     // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
-                    sleep(500);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
+                    sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 24);
+                    drive.newDriveDistance(0.5, 180, 19);
+
                     autoState = AutoBlueCorner.State.SCORE_HIGH_JUNCTION;
                     break;
 
                 case SCORE_HIGH_JUNCTION:
-                    //Todo: Test this section of code
-
                     // rotate towards the high junction
-                    drive.PIDRotate(-30, 2);
+                    drive.PIDRotate(-40, 2);
 
-                    // raise the lift to the low junction
+                    // raise the lift to the high junction
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(500);
+                    sleep(400);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0);
+                    drive.newDriveDistance(0.3, 0, 2);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
                     sleep(100);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    sleep(500);
 
                     // open the claw to release the cone
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 0);
+                    drive.newDriveDistance(0.3, 180, 2);
+                    sleep(300);
 
-                    // rotate back towards the outside wall to pick up another cone
-                    drive.PIDRotate(90, 2);
+                    // rotate back towards the cone stack
+                    drive.PIDRotate(90,2);
+                    sleep(300);
+                    drive.resetLift(robot.LIFT_POWER_DOWN);
 
-                    autoState = State.CONE_3;
+                    autoState = State.PARK;
                     break;
 
                 case CONE_3:

@@ -35,14 +35,15 @@ public class AutoRedCorner extends LinearOpMode {
 
     FtcDashboard dashboard;
 
-    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
+    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
 //    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
 
     private static final String[] LABELS = {
-            "logo",
-            "mouse",
-            "qrocde"
+            "circle",
+            "triangle",
+            "star"
     };
 
     private static final String VUFORIA_KEY =
@@ -122,19 +123,20 @@ public class AutoRedCorner extends LinearOpMode {
 
                         telemetry.addData(""," ");
                         telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
+                        telemetry.addData("Park Position = ", position);
                         telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                         telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        if(Objects.equals(recognition.getLabel(), "qrcode")){
+                        if(Objects.equals(recognition.getLabel(), "circle")){
                             position =2;
-                        } else if(Objects.equals(recognition.getLabel(), "logo")){
+                        } else if(Objects.equals(recognition.getLabel(), "triangle")){
                             position = 3;
                         } else position = 1;
 
                         dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
                         dashTelemetry.put("Image             : ", recognition.getLabel());
+                        dashTelemetry.put("Position          : ", position);
                         dashTelemetry.put("Confidence        : ", recognition.getConfidence() * 100 );
                         dashboard.sendTelemetryPacket(dashTelemetry);
-
                         telemetry.update();
                     }
                 }
@@ -150,7 +152,6 @@ public class AutoRedCorner extends LinearOpMode {
                     sleep(3000);
                     //                    drive.driveDistance(.5, -90, 20);
                     autoState = State.HALT;
-
                     break;
 
                 case DETECT_CONE:
@@ -167,7 +168,6 @@ public class AutoRedCorner extends LinearOpMode {
                     // raise the lift to place the cone
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
-//                    sleep(500);
 
                     // drive forward to place the cone
                     drive.newDriveDistance(0.3, 0, 4);
@@ -192,7 +192,6 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.fingerRetract();
 
                     autoState = State.CONE_5;
-
                     break;
 
                 case CONE_5:
