@@ -78,28 +78,28 @@ public class MecanumTeleOp extends LinearOpMode {
 */
 
             /*  LIFT CONTROL  */
-            if(gamepad1.a){
+            if(gamepad1.a || gamepad2.a){
                 targetPosition = robot.LIFT_RESET;
                 robot.servoFinger.setPosition(robot.FINGER_IN);
                 liftPower = robot.LIFT_POWER_DOWN;
-            } else if(gamepad1.b){
+            } else if(gamepad1.b || gamepad2.b){
                 targetPosition = robot.LIFT_LOW_JUNCTION;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
                 liftPower = robot.LIFT_POWER_UP;
-            } else if(gamepad1.x) {
+            } else if(gamepad1.x || gamepad2.x) {
                 targetPosition = robot.LIFT_MID_JUNCTION;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
                 liftPower = robot.LIFT_POWER_UP;
-            } else if(gamepad1.y) {
+            } else if(gamepad1.y || gamepad2.y) {
                 targetPosition = robot.LIFT_MAX_HEIGHT;
                 robot.servoFinger.setPosition(robot.FINGER_OUT);
                 liftPower = robot.LIFT_POWER_UP;
             }
 
-            if (gamepad1.left_trigger > 0.1){
+            if ((gamepad1.left_trigger > 0.1) || (gamepad2.left_trigger > 0.1)){
                 targetPosition = targetPosition + 20;
                 liftPower = robot.LIFT_POWER_UP;
-            } else if (gamepad1.right_trigger > 0.1) {
+            } else if ((gamepad1.right_trigger > 0.1) || (gamepad2.right_trigger > 0.1)) {
                 targetPosition = targetPosition - 20;
                 liftPower = robot.LIFT_POWER_DOWN;
             }
@@ -110,25 +110,18 @@ public class MecanumTeleOp extends LinearOpMode {
             drive.liftPosition(targetPosition, liftPower);
 
             /* Claw Control */
-            if(gamepad1.right_bumper) {
+            if(gamepad1.right_bumper || gamepad2.right_bumper) {
                 elapsedTime.reset();
                 drive.openClaw();
-            } else if (gamepad1.left_bumper){
+            } else if (gamepad1.left_bumper || gamepad2.right_bumper){
                 drive.closeClaw();
             }
 
-            if(gamepad2.dpad_right){
-                drive.PIDRotate(-90, 2);
+            if(gamepad1.dpad_up) {
+                robot.lamp.setPower(1);
+            } else if (gamepad1.dpad_down){
+                robot.lamp.setPower(0);
             }
-            if (gamepad2.dpad_left){
-                drive.PIDRotate(90, 2);
-            }
-            /*
-            if(gamepad1.left_bumper) {
-                robot.servoGrabber.setPosition(0.3);
-            }
-
-             */
 
             if(robot.sensorCone.getDistance(DistanceUnit.CM) <= 5) {
                 if(elapsedTime.time() >= 5) {

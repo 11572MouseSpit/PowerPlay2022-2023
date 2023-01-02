@@ -30,6 +30,7 @@ public class HWProfile {
     public MotorEx motorRightRear   =   null;
     public DcMotorEx motorRightLift   =   null;
     public DcMotorEx motorLeftLift    =   null;
+    public DcMotorEx lamp   =   null;
 
     public RevIMU imu =                 null;
     public DistanceSensor sensorCone;
@@ -148,6 +149,8 @@ public class HWProfile {
         motorRR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRR.setPower(0);
 
+        lamp = hwMap.get(DcMotorEx.class, "lamp");
+        lamp.setPower(0);
 
         motorLeftLift = hwMap.get(DcMotorEx.class, "motorLeftLift");
         motorLeftLift.setDirection(DcMotorEx.Direction.REVERSE);
