@@ -7,9 +7,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -69,6 +71,8 @@ public class AutoBlueCorner extends LinearOpMode {
     @Override
 
     public void runOpMode() {
+        ElapsedTime elapsedTime = new ElapsedTime();
+
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -199,35 +203,46 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 51);
+                    drive.newDriveDistance(0.6, 0, 45);
+                    drive.newDriveDistance(0.4, 0, 5);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
 
                     // back into position to pick up the second cone
-                    drive.newDriveDistance(0.4, 180, 1);
+                    //drive.newDriveDistance(0.4, 180, 1);
 
                     // turn towards the stack of cones
                     drive.PIDRotate(90, 1);
-                    drive.PIDRotate(90, 1);
+                    //drive.PIDRotate(90, 1);
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 12);
+                    drive.newDriveDistance(0.5, 0, 13);
 
-                    // turn towards the stack of cones
+                    // adjust
                     drive.PIDRotate(90, 2);
 
-                    // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 7);
+                    // drive until it hits cone
+
+                    elapsedTime.reset();
+
+                    while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
+                        drive.setDrivePower(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
+                                robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
+                    }
+
+                    //stop motors
+                    drive.motorsHalt();
+
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(300);
 
-                    // drive to the stack of cones
+                    // back away from the stack of cones
                     drive.newDriveDistance(0.5, 180, 1);
 
                     // lift the cone off the stack
@@ -236,7 +251,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.7, 180, 21);
+                    drive.newDriveDistance(0.7, 180, 18);
 
                     autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION2;
                     break;
@@ -248,10 +263,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // rotate to the 2nd low junction
-                    drive.PIDRotate(130, 1);
+                    drive.PIDRotate(125, 1);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 6);
+                    drive.newDriveDistance(0.3, 0, 5);
 
                     // open the claw to release the cone
                     drive.openClaw();
@@ -279,13 +294,28 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 22);
+                    drive.newDriveDistance(0.5, 0, 12);
+                    drive.PIDRotate(90,1);
+
+                    drive.newDriveDistance(0.5, 0, 5);
+
+                    // drive until it hits cone
+
+                    elapsedTime.reset();
+
+                    while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
+                        drive.setDrivePower(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
+                                robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
+                    }
+
+                    //stop motors
+                    drive.motorsHalt();
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(300);
 
-                    // drive to the stack of cones
+                    // back away from the stack of cones
                     drive.newDriveDistance(0.3, 180, 1);
 
                     // lift the cone off the stack
