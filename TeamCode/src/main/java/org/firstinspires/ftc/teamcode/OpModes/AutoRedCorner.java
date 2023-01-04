@@ -72,7 +72,6 @@ public class AutoRedCorner extends LinearOpMode {
 
     public void runOpMode() {
         ElapsedTime elapsedTime = new ElapsedTime();
-        double currentTime = 0;
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
