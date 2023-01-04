@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 
-@TeleOp(name = "Teleop Mode", group = "Competition")
+@TeleOp(name = "JoslynTeleOp", group = "Competition")
 
-public class MecanumTeleOp extends LinearOpMode {
+public class JoslynTeleOp extends LinearOpMode {
     private final static HWProfile robot = new HWProfile();
 
     @Override
@@ -21,7 +21,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double theta;
         double theta2 = 180;
         double r;
-        double power=1;
+        double power=.1;
         double rightX, rightY;
         boolean fieldCentric = false;
         int targetPosition = 0;
@@ -61,10 +61,10 @@ public class MecanumTeleOp extends LinearOpMode {
             v3 = (r * Math.sin(robotAngle - Math.toRadians(theta + theta2)) - rightX + rightY);
             v4 = (r * Math.cos(robotAngle - Math.toRadians(theta + theta2)) + rightX + rightY);
 
-            robot.motorLF.setPower(com.qualcomm.robotcore.util.Range.clip((v1), -power, power));
-            robot.motorRF.setPower(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
-            robot.motorLR.setPower(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
-            robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
+            robot.motorLF.setPower(Range.clip((v1), -power, power));
+            robot.motorRF.setPower(Range.clip((v2), -power, power));
+            robot.motorLR.setPower(Range.clip((v3), -power, power));
+            robot.motorRR.setPower(Range.clip((v4), -power, power));
 
             // Control which direction is forward and which is backward from the driver POV
  /*           if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
@@ -97,10 +97,10 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             if ((gamepad1.left_trigger > 0.1) || (gamepad2.left_trigger > 0.1)){
-                targetPosition = targetPosition + 20;
+                targetPosition = targetPosition + 5;
                 liftPower = robot.LIFT_POWER_UP;
             } else if ((gamepad1.right_trigger > 0.1) || (gamepad2.right_trigger > 0.1)) {
-                targetPosition = targetPosition - 20;
+                targetPosition = targetPosition - 5;
                 liftPower = robot.LIFT_POWER_DOWN;
             }
 
