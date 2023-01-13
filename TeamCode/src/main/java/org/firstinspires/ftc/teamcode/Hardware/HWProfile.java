@@ -54,7 +54,7 @@ public class HWProfile {
     public final int LIFT_MID_JUNCTION = 700;
     public final int LIFT_HIGH_JUNCTION = 1150;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 135;
+    public final int LIFT_CONE_5 = 150;
     public final int LIFT_CONE_4 = 110;
     public final int LIFT_CONE_3 = 95;
     public final int LIFT_CONE_2 = 60;

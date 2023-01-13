@@ -166,7 +166,7 @@ public class AutoRedCorner extends LinearOpMode {
                 case SCORE_LOW_JUNCTION:
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(300);
+                    sleep(800);
 
                     // raise the lift to place the cone
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);

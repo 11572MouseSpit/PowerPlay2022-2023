@@ -21,7 +21,7 @@ public class JoslynTeleOp extends LinearOpMode {
         double theta;
         double theta2 = 180;
         double r;
-        double power=.1;
+        double power=.2;
         double rightX, rightY;
         boolean fieldCentric = false;
         int targetPosition = 0;
