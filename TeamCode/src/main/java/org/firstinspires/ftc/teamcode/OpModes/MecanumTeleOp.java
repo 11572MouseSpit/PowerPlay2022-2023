@@ -124,7 +124,7 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             if(robot.sensorCone.getDistance(DistanceUnit.CM) <= 5) {
-                if(elapsedTime.time() >= 5) {
+                if(elapsedTime.time() >= robot.CONE_DISTANCE) {
                     drive.closeClaw();
                 }
             }
