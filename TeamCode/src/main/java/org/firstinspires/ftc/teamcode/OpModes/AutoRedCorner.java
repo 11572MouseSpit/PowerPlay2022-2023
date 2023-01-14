@@ -199,7 +199,7 @@ public class AutoRedCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 49);
+                    drive.newDriveDistance(0.6, 0, 52);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
@@ -259,19 +259,20 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // rotate to the 2nd low junction
-                    drive.PIDRotate(-125, 1);
+                    drive.PIDRotate(-128, 1);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 6);
+                    drive.newDriveDistance(0.3, 0, 4);
 
                     // open the claw to release the cone
-                    drive.openClaw();
                     drive.fingerRetract();
-                    sleep(100);
+                    sleep(50);
+                    drive.openClaw();
+                    sleep(150);
 
 
                     // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 3);
+                    drive.newDriveDistance(0.5, 180, 2);
 
                     // lower the lift to collect the next cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
@@ -312,8 +313,9 @@ public class AutoRedCorner extends LinearOpMode {
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(250);
                     drive.fingerExtend();
-                    sleep(500);
+                    sleep(250);
 
                     // back away from the stack of cones
                     drive.newDriveDistance(0.5, 180, 17);
@@ -507,11 +509,11 @@ public class AutoRedCorner extends LinearOpMode {
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 180,2);
+                        drive.newDriveDistance(0.3, 180,0);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.3, 180, 25);
+                        drive.newDriveDistance(0.45, 180, 25);
                     }
 
                     autoState = State.HALT;
