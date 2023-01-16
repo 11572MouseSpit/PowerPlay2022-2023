@@ -213,7 +213,7 @@ public class DriveClass {
      * @param targetAngle -> desire ending angle/position of the robot
      * @param targetError -> how close should the robot get to the desired angle
      */
-    public void PIDRotate(double targetAngle, double targetError){
+    public double PIDRotate(double targetAngle, double targetError){
         double integral = 0;
         ElapsedTime timeElapsed = new ElapsedTime();
         double startTime = timeElapsed.time();
@@ -311,6 +311,8 @@ public class DriveClass {
         dashTelemetry.put("p11 - Left Front                   = ", LF);
         dashTelemetry.put("p12 - Right Rear                   = ", RR);
         dashboard.sendTelemetryPacket(dashTelemetry);
+
+        return(-robot.imu.getAngles()[0] - targetAngle);        // return the rotate error value
     }   //end of the PIDRotate Method
 
     /**
@@ -551,7 +553,7 @@ public class DriveClass {
      * @param heading   - direction for the robot to strafe to
      * @param distance  - amount of time that the robot will move
      */
-    public void newDriveDistance(double power, double heading, double distance) {
+    public double newDriveDistance(double power, double heading, double distance) {
         double initZ = getZAngle();
         double currentZ = 0;
         double zCorrection = 0;
@@ -617,6 +619,9 @@ public class DriveClass {
         }   // end of while loop
 
         newMotorsHalt();
+
+
+        return (newCalcDistance(heading) - distance);       // return the overshoot value
 
     }   // close newDriveDistance method
 
