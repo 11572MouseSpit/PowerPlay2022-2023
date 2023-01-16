@@ -156,14 +156,14 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
                     sleep(3000);
                     //                    drive.driveDistance(.5, -90, 20);
-                    autoState = AutoBlueCorner.State.HALT;
+                    autoState = State.HALT;
 
                     break;
 
                 case DETECT_CONE:
                     telemetry.addData("PARK POSITION = ", position);
                     telemetry.update();
-                    autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION;
+                    autoState = State.SCORE_LOW_JUNCTION;
                     break;
 
                 case SCORE_LOW_JUNCTION:
@@ -197,7 +197,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.resetLift(robot.LIFT_POWER_DOWN);
                     drive.fingerRetract();
 
-                    autoState = AutoBlueCorner.State.CONE_5;
+                    autoState = State.CONE_5;
 
                     break;
 
@@ -253,7 +253,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     // back away from the stack of cones
                     drive.newDriveDistance(0.7, 180, 18);
 
-                    autoState = AutoBlueCorner.State.SCORE_LOW_JUNCTION2;
+                    autoState = State.SCORE_LOW_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
@@ -326,7 +326,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     // back away from the stack of cones
                     drive.newDriveDistance(0.5, 180, 19);
 
-                    autoState = AutoBlueCorner.State.SCORE_HIGH_JUNCTION;
+                    autoState = State.SCORE_HIGH_JUNCTION;
                     break;
 
                 case SCORE_HIGH_JUNCTION:
@@ -507,7 +507,7 @@ public class AutoBlueCorner extends LinearOpMode {
                         drive.newDriveDistance(0.3, 0, 2);
                     }
 
-                    autoState = AutoBlueCorner.State.HALT;
+                    autoState = State.HALT;
 
                     break;
 
