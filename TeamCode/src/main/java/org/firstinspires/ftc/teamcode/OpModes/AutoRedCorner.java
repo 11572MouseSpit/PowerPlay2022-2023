@@ -237,13 +237,13 @@ public class AutoRedCorner extends LinearOpMode {
                     // drive to the stack of cones
                     drive.newDriveDistance(0.5, 0, 12);
 
-                    // turn towards the stack of cones
+                    // turn towards the stack of cones 2nd
                     turnError = drive.PIDRotate(-90, 2);
                     while(Math.abs(turnError) > 1){
                         turnError = drive.PIDRotate(-90, 1);
                     }
 
-                    // drive to the stack of cones
+                    // drive to the stack of cones 2nd
                     drive.newDriveDistance(0.5, 0, 3);
 
                     // drive until it hits cone using the color sensor
@@ -295,7 +295,7 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.fingerRetract();
                     sleep(50);
                     drive.openClaw();
-                    sleep(100);
+                    sleep(300);
 
 
                     // back away from the junction
