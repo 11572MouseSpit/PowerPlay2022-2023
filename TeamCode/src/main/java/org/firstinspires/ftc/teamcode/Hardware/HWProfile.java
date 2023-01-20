@@ -65,11 +65,13 @@ public class HWProfile {
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
     public final double LIFT_kD = 1.05;
-    public final double CONE_DISTANCE = 10;
+    public final double CONE_DISTANCE = 15;
     public final double LIFT_kF = 0.7;
     public final double WAIT_DRIVE_TO_CONE = 1;
     public final double CLAW_OPEN = 0.3;
     public final double CLAW_CLOSE = 0.6;
+    public final double TURN_SPEED = 0.5;
+    public final double TURN_ROTATION = 110;
     public final double DRIVE_TO_CONE_POWER = 0.2;
     public final double STRAFE_FACTOR = 1.1;
     public final double FINGER_IN = 0.4;

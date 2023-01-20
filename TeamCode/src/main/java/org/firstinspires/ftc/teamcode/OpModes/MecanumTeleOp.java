@@ -23,11 +23,18 @@ public class MecanumTeleOp extends LinearOpMode {
         double r;
         double power=1;
         double rightX, rightY;
+        double TargetRotation = 0;
+        double OldRotation = 0;
+        boolean rotateEnabled = false;
         boolean fieldCentric = false;
         int targetPosition = 0;
         LinearOpMode opMode = this;
         double liftPower = robot.LIFT_POWER_DOWN;
         ElapsedTime elapsedTime = new ElapsedTime();
+        double RFrotatePower = robot.TURN_SPEED;
+        double LFrotatePower = -robot.TURN_SPEED;
+        double LRrotatePower = -robot.TURN_SPEED;
+        double RRrotatePower = robot.TURN_SPEED;
 
 
         robot.init(hardwareMap);
@@ -61,10 +68,23 @@ public class MecanumTeleOp extends LinearOpMode {
             v3 = (r * Math.sin(robotAngle - Math.toRadians(theta + theta2)) - rightX + rightY);
             v4 = (r * Math.cos(robotAngle - Math.toRadians(theta + theta2)) + rightX + rightY);
 
-            robot.motorLF.setPower(com.qualcomm.robotcore.util.Range.clip((v1), -power, power));
-            robot.motorRF.setPower(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
-            robot.motorLR.setPower(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
-            robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
+            if(robot.imu.getAbsoluteHeading() - OldRotation >= TargetRotation && rotateEnabled) {
+                rotateEnabled = false;
+                TargetRotation = 0;
+                OldRotation = 0;
+            }
+
+            if(!rotateEnabled) {
+                robot.motorLF.setPower(com.qualcomm.robotcore.util.Range.clip((v1), -power, power));
+                robot.motorRF.setPower(com.qualcomm.robotcore.util.Range.clip((v2), -power, power));
+                robot.motorLR.setPower(com.qualcomm.robotcore.util.Range.clip((v3), -power, power));
+                robot.motorRR.setPower(com.qualcomm.robotcore.util.Range.clip((v4), -power, power));
+            } else {
+                robot.motorLF.setPower(LFrotatePower);
+                robot.motorRF.setPower(RFrotatePower);
+                robot.motorLR.setPower(LRrotatePower);
+                robot.motorRR.setPower(RRrotatePower);
+            }
 
             // Control which direction is forward and which is backward from the driver POV
  /*           if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
@@ -113,7 +133,7 @@ public class MecanumTeleOp extends LinearOpMode {
             if(gamepad1.right_bumper || gamepad2.right_bumper) {
                 elapsedTime.reset();
                 drive.openClaw();
-            } else if (gamepad1.left_bumper || gamepad2.right_bumper){
+            } else if (gamepad1.left_bumper || gamepad2.left_bumper){
                 drive.closeClaw();
             }
 
@@ -129,6 +149,28 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
             }
 
+            // 90 degree turn
+            if(gamepad1.dpad_right) {
+                TargetRotation = robot.TURN_ROTATION;
+                OldRotation = robot.imu.getAbsoluteHeading();
+                rotateEnabled = true;
+
+                RFrotatePower = robot.TURN_SPEED;
+                LFrotatePower = -robot.TURN_SPEED;
+                LRrotatePower = -robot.TURN_SPEED;
+                RRrotatePower = robot.TURN_SPEED;
+            }
+//            else if(gamepad1.dpad_left) {
+//                TargetRotation = -robot.TURN_ROTATION;
+//                OldRotation = -robot.imu.getAbsoluteHeading();
+//                rotateEnabled = true;
+//
+//                RFrotatePower = -robot.TURN_SPEED;
+//                LFrotatePower = robot.TURN_SPEED;
+//                LRrotatePower = robot.TURN_SPEED;
+//                RRrotatePower = -robot.TURN_SPEED;
+//            }
+
             // Provide user feedback
             telemetry.addData("V1 = ", v1);
             telemetry.addData("elapsed time = ", elapsedTime.time());
@@ -140,6 +182,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Theta = ", theta);
             telemetry.addData("Theta2 = ", theta);
             telemetry.addData("IMU Value: ", theta);
+            telemetry.addData("robot rotation: ", OldRotation);
             telemetry.update();
 
         }   // end of while(opModeIsActive)
