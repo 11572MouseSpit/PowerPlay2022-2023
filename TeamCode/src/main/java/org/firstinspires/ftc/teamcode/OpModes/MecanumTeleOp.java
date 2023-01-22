@@ -68,7 +68,7 @@ public class MecanumTeleOp extends LinearOpMode {
             v3 = (r * Math.sin(robotAngle - Math.toRadians(theta + theta2)) - rightX + rightY);
             v4 = (r * Math.cos(robotAngle - Math.toRadians(theta + theta2)) + rightX + rightY);
 
-            if(robot.imu.getAbsoluteHeading() - OldRotation >= TargetRotation && rotateEnabled) {
+            if(((robot.imu.getAbsoluteHeading() - OldRotation >= TargetRotation && TargetRotation > 0) || (robot.imu.getAbsoluteHeading() - OldRotation <= TargetRotation && TargetRotation < 0)) && rotateEnabled) {
                 rotateEnabled = false;
                 TargetRotation = 0;
                 OldRotation = 0;
@@ -143,8 +143,8 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.lamp.setPower(0);
             }
 
-            if(robot.sensorCone.getDistance(DistanceUnit.CM) <= 5) {
-                if(elapsedTime.time() >= robot.CONE_DISTANCE) {
+            if(robot.sensorCone.getDistance(DistanceUnit.CM) <= robot.CONE_DISTANCE) {
+                if(elapsedTime.time() >= robot.CONE_WAIT_TIME) {
                     drive.closeClaw();
                 }
             }
@@ -159,17 +159,16 @@ public class MecanumTeleOp extends LinearOpMode {
                 LFrotatePower = -robot.TURN_SPEED;
                 LRrotatePower = -robot.TURN_SPEED;
                 RRrotatePower = robot.TURN_SPEED;
+            } else if(gamepad1.dpad_left) {
+                TargetRotation = -robot.TURN_ROTATION;
+                OldRotation = robot.imu.getAbsoluteHeading();
+                rotateEnabled = true;
+
+                RFrotatePower = -robot.TURN_SPEED;
+                LFrotatePower = robot.TURN_SPEED;
+                LRrotatePower = robot.TURN_SPEED;
+                RRrotatePower = -robot.TURN_SPEED;
             }
-//            else if(gamepad1.dpad_left) {
-//                TargetRotation = -robot.TURN_ROTATION;
-//                OldRotation = -robot.imu.getAbsoluteHeading();
-//                rotateEnabled = true;
-//
-//                RFrotatePower = -robot.TURN_SPEED;
-//                LFrotatePower = robot.TURN_SPEED;
-//                LRrotatePower = robot.TURN_SPEED;
-//                RRrotatePower = -robot.TURN_SPEED;
-//            }
 
             // Provide user feedback
             telemetry.addData("V1 = ", v1);

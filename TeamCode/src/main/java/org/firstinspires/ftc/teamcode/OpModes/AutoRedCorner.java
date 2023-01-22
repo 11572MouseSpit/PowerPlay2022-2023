@@ -37,8 +37,9 @@ public class AutoRedCorner extends LinearOpMode {
 
     FtcDashboard dashboard;
 
-    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
-//    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+    private static final String TFOD_MODEL_ASSET = "PP_Generic_SS.tflite";
+    //    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
 //    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
 
@@ -217,7 +218,7 @@ public class AutoRedCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 57);
+                    drive.newDriveDistance(0.6, 0, 55);
                     drive.newDriveDistance(0.3, 180, 2);
 
                     // raise the lift to collect a cone
@@ -358,6 +359,7 @@ public class AutoRedCorner extends LinearOpMode {
 
                     // raise the lift to the high junction
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
+                    drive.fingerExtend();
                     sleep(400);
 
                     // drive towards the low junction to place the cone
@@ -539,11 +541,11 @@ public class AutoRedCorner extends LinearOpMode {
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 180,0);
+                        drive.newDriveDistance(0.3, 180,2);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 180, 25);
+                        drive.newDriveDistance(0.45, 180, 28);
                     }
 
                     autoState = State.HALT;
