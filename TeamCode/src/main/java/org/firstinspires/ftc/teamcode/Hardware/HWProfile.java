@@ -21,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 // test comment from Christopher
-
 public class HWProfile {
     /* Public OpMode members. */
     public MotorEx motorLeftFront   =   null;
@@ -69,7 +68,7 @@ public class HWProfile {
     public final double CONE_DISTANCE = 5;
     public final double LIFT_kF = 0.7;
     public final double WAIT_DRIVE_TO_CONE = 1;
-    public final double CLAW_OPEN = 0.3;
+    public final double CLAW_OPEN = 0.1;
     public final double CLAW_CLOSE = 0.6;
     public final double TURN_SPEED = 0.5;
     public final double TURN_ROTATION = 110;
