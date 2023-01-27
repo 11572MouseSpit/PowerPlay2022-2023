@@ -37,8 +37,9 @@ public class AutoRedCorner extends LinearOpMode {
 
     FtcDashboard dashboard;
 
-    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
-//    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+    private static final String TFOD_MODEL_ASSET = "PP_Generic_SS.tflite";
+    //    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
 //    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
 
@@ -184,9 +185,9 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.newDriveDistance(0.3, 0, 3);
 
                     // turn towards the low junction
-                    turnError = drive.PIDRotate(40, 1);
+                    turnError = drive.PIDRotate(43, 1);
                     while(Math.abs(turnError) > 1){
-                        turnError = drive.PIDRotate(40, 1);
+                        turnError = drive.PIDRotate(43, 1);
                     }
 
                     // drive forward to place the cone
@@ -217,10 +218,13 @@ public class AutoRedCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 52);
+                    drive.newDriveDistance(0.6, 0, 55);
+                    drive.newDriveDistance(0.3, 180, 2);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
+
+                    sleep(1000);
 
                     // back into position to correct for overshoot
                     drive.newDriveDistance(0.2, 180, overshoot);
@@ -355,10 +359,11 @@ public class AutoRedCorner extends LinearOpMode {
 
                     // raise the lift to the high junction
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
+                    drive.fingerExtend();
                     sleep(400);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0.75);
+//                    drive.newDriveDistance(0.3, 0, 0.75);
 
                     sleep(1000);
 
@@ -370,7 +375,7 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 2);
+//                    drive.newDriveDistance(0.3, 180, 2);
                     sleep(300);
 
                     // rotate back towards the cone stack
@@ -536,11 +541,11 @@ public class AutoRedCorner extends LinearOpMode {
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 180,0);
+                        drive.newDriveDistance(0.3, 180,2);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 180, 25);
+                        drive.newDriveDistance(0.45, 180, 28);
                     }
 
                     autoState = State.HALT;

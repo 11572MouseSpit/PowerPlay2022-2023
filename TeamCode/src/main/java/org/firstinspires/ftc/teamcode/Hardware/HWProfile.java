@@ -21,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 // test comment from Christopher
-
 public class HWProfile {
     /* Public OpMode members. */
     public MotorEx motorLeftFront   =   null;
@@ -50,13 +49,14 @@ public class HWProfile {
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LIFT_RESET = 0;
-    public final int LIFT_LOW_JUNCTION = 450;
-    public final int LIFT_MID_JUNCTION = 750;
-    public final int LIFT_HIGH_JUNCTION = 1250;
+    public final int LIFT_LOW_JUNCTION = 350;
+    public final int LIFT_MID_JUNCTION = 730;
+    public final int LIFT_HIGH_JUNCTION = 1270;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 170;
-    public final int LIFT_CONE_4 = 130;
-    public final int LIFT_CONE_3 = 95;
+    public final int LIFT_CONE_5 = 160;
+    public final double CONE_WAIT_TIME = 4;
+    public final int LIFT_CONE_4 = 140  ;
+    public final int LIFT_CONE_3 = 125;
     public final int LIFT_CONE_2 = 60;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
     public final double LIFT_POWER_UP = 0.87;
@@ -65,10 +65,10 @@ public class HWProfile {
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
     public final double LIFT_kD = 1.05;
-    public final double CONE_DISTANCE = 15;
+    public final double CONE_DISTANCE = 5;
     public final double LIFT_kF = 0.7;
     public final double WAIT_DRIVE_TO_CONE = 1;
-    public final double CLAW_OPEN = 0.3;
+    public final double CLAW_OPEN = 0.1;
     public final double CLAW_CLOSE = 0.6;
     public final double TURN_SPEED = 0.5;
     public final double TURN_ROTATION = 110;
