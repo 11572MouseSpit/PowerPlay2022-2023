@@ -50,11 +50,11 @@ public class HWProfile {
 
     public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
     public final int LIFT_RESET = 0;
-    public final int LIFT_LOW_JUNCTION = 350;
-    public final int LIFT_MID_JUNCTION = 700;
-    public final int LIFT_HIGH_JUNCTION = 1150;
+    public final int LIFT_LOW_JUNCTION = 450;
+    public final int LIFT_MID_JUNCTION = 750;
+    public final int LIFT_HIGH_JUNCTION = 1250;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 160;
+    public final int LIFT_CONE_5 = 170;
     public final int LIFT_CONE_4 = 130;
     public final int LIFT_CONE_3 = 95;
     public final int LIFT_CONE_2 = 60;
