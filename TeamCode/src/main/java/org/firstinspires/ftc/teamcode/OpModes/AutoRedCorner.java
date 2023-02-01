@@ -37,8 +37,8 @@ public class AutoRedCorner extends LinearOpMode {
 
     FtcDashboard dashboard;
 
-//    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
-    private static final String TFOD_MODEL_ASSET = "PP_Generic_SS.tflite";
+    private static final String TFOD_MODEL_ASSET = "GenericSignalSleeve-Take1.tflite";
+//    private static final String TFOD_MODEL_ASSET = "PP_Generic_SS.tflite";
     //    private static final String TFOD_MODEL_ASSET = "MouseSpit-Take1.tflite";
 //    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 

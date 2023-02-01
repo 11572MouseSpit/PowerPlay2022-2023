@@ -72,7 +72,8 @@ public class AutoBlueCorner extends LinearOpMode {
 
     public void runOpMode() {
         ElapsedTime elapsedTime = new ElapsedTime();
-
+        double overshoot = 0;
+        double turnError = 0;
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -136,6 +137,13 @@ public class AutoBlueCorner extends LinearOpMode {
                             position = 2;
                         } else position = 3;
 
+                        dashTelemetry.put("IMU Value :" , drive.getZAngle());
+                        dashTelemetry.put("Motor Left Rear: ", robot.motorLeftRear.getCurrentPosition());
+                        dashTelemetry.put("Motor Left Front: ", robot.motorLeftFront.getCurrentPosition());
+                        dashTelemetry.put("Motor Right Rear: ", robot.motorRightRear.getCurrentPosition());
+                        dashTelemetry.put("Motor Right Front: ", robot.motorRightFront.getCurrentPosition());
+                        dashTelemetry.put("Motor Left Lift: ", robot.motorLeftLift.getCurrentPosition());
+                        dashTelemetry.put("Motor Right Lift: ", robot.motorRightLift.getCurrentPosition());
                         dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
                         dashTelemetry.put("Image             : ", recognition.getLabel());
                         dashTelemetry.put("Position          : ", position);
@@ -169,58 +177,71 @@ public class AutoBlueCorner extends LinearOpMode {
                 case SCORE_LOW_JUNCTION:
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(300);
+                    sleep(500);
 
                     // raise the lift to place the cone
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.3, 0, 4);
+                    drive.newDriveDistance(0.3, 0, 3);
 
                     // turn towards the low junction
-                    drive.PIDRotate(-45, 2);
+                    turnError = drive.PIDRotate(-48, 1);
+                    while(Math.abs(turnError) > 1){
+                        turnError = drive.PIDRotate(-48, 1);
+                    }
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.3, 0, 2);
+                    // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
+                    overshoot = drive.newDriveDistance(0.3, 0, 2);
 
                     // release the cone
+                    drive.fingerRetract();
+                    sleep(75);
                     drive.openClaw();
+                    sleep(150);
 
                     // drive back to head towards the cone stack
-                    drive.newDriveDistance(0.3, 180, 2);
+                    drive.newDriveDistance(0.3, 180, (2 + overshoot));
 
                     // point in the right direction
-                    drive.PIDRotate(0, 2);
+                    turnError = drive.PIDRotate(00, 1);
+                    while(Math.abs(turnError) > 1){
+                        turnError = drive.PIDRotate(0, 1);
+                    }
 
                     // Lower the lift to place the cone
                     drive.resetLift(robot.LIFT_POWER_DOWN);
                     drive.fingerRetract();
 
                     autoState = State.CONE_5;
-
                     break;
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 45);
-                    drive.newDriveDistance(0.4, 0, 5);
+                    drive.newDriveDistance(0.6, 0, 55);
+                    drive.newDriveDistance(0.3, 180, 2);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
 
-                    // back into position to pick up the second cone
-                    //drive.newDriveDistance(0.4, 180, 1);
+                    sleep(1000);
+
+                    // back into position to correct for overshoot
+                    drive.newDriveDistance(0.2, 180, overshoot);
 
                     // turn towards the stack of cones
-                    drive.PIDRotate(90, 1);
-                    //drive.PIDRotate(90, 1);
+                    turnError =  drive.PIDRotate(90, 1);
+                    while(Math.abs(turnError) > 1){
+                        turnError = drive.PIDRotate(90, 1);
+                    }
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 13);
+                    drive.newDriveDistance(0.5, 0, 16);
 
                     // adjust
                     drive.PIDRotate(90, 2);
@@ -275,7 +296,7 @@ public class AutoBlueCorner extends LinearOpMode {
 
 
                     // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 3);
+                    drive.newDriveDistance(0.5, 180, 5);
 
                     // lower the lift to collect the next cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
@@ -496,15 +517,15 @@ public class AutoBlueCorner extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.3, 0,48);
+                        drive.newDriveDistance(0.3, 180,20);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 0,20);
+                        drive.newDriveDistance(0.3, 0,0);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.3, 0, 2);
+                        drive.newDriveDistance(0.3, 0, 20);
                     }
 
                     autoState = State.HALT;
