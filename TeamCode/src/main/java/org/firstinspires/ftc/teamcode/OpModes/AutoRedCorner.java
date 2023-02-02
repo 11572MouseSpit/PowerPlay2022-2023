@@ -363,7 +363,7 @@ public class AutoRedCorner extends LinearOpMode {
                     sleep(400);
 
                     // drive towards the low junction to place the cone
-//                    drive.newDriveDistance(0.3, 0, 0.75);
+                    drive.newDriveDistance(0.3, 180, 0.75);
 
                     sleep(1000);
 
@@ -375,7 +375,7 @@ public class AutoRedCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-//                    drive.newDriveDistance(0.3, 180, 2);
+                    drive.newDriveDistance(0.3, 0, .75);
                     sleep(300);
 
                     // rotate back towards the cone stack
