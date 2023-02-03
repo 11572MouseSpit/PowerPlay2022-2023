@@ -184,7 +184,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.3, 0, 3);
+                    drive.newDriveDistance(0.3, 0, 4);
 
                     // turn towards the low junction
                     turnError = drive.PIDRotate(-48, 1);
@@ -195,6 +195,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     // drive forward to place the cone
                     // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
                     overshoot = drive.newDriveDistance(0.3, 0, 1);
+                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     // release the cone
                     drive.fingerRetract();
@@ -203,13 +204,13 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(150);
 
                     // drive back to head towards the cone stack
-                    drive.newDriveDistance(0.3, 180, (1 + overshoot));
+                    drive.newDriveDistance(0.3, 180, (2 + overshoot));
 
                     // point in the right direction
                     turnError = drive.PIDRotate(0, 1);
-                    while(Math.abs(turnError) > 1){
+                    /*while(Math.abs(turnError) > 1){
                         turnError = drive.PIDRotate(0, 1);
-                    }
+                    }*/
 
                     // Lower the lift to place the cone
                     drive.resetLift(robot.LIFT_POWER_DOWN);
@@ -244,7 +245,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 18);
+                    drive.newDriveDistance(0.5, 0, 20);
 
                     // adjust
                     drive.PIDRotate(90, 2);
@@ -265,6 +266,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(300);
+
+                    drive.newDriveDistance(0.4, 0, 2);
+
+                    sleep(75);
 
                     // back away from the stack of cones
                     drive.newDriveDistance(0.5, 180, 1);
@@ -290,7 +295,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.PIDRotate(125, 1);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 2);
+                    drive.newDriveDistance(0.3, 0, 1);
 
                     // open the claw to release the cone
                     drive.openClaw();
@@ -305,7 +310,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     //rotate towards the cone stack
-                    drive.PIDRotate(90, 2);
+                    drive.PIDRotate(90, 1);
 
                     autoState = State.CONE_4;
                     break;
@@ -365,7 +370,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(400);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 1);
+                    drive.newDriveDistance(0.3, 0, 2);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
@@ -375,7 +380,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 1);
+                    drive.newDriveDistance(0.3, 180, 2);
                     sleep(300);
 
                     // rotate back towards the cone stack
