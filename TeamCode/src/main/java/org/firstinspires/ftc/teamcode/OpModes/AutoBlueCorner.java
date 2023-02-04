@@ -292,10 +292,15 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // rotate to the 2nd low junction
-                    drive.PIDRotate(125, 1);
+                    drive.PIDRotate(124, 1);
 
                     // drive towards the low junction to place the cone
                     drive.newDriveDistance(0.3, 0, 1);
+
+                    // drive forward to place the cone
+                    // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
+                    overshoot = drive.newDriveDistance(0.3, 0, 1);
+                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     // open the claw to release the cone
                     drive.openClaw();
