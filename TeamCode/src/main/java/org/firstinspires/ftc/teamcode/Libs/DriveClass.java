@@ -229,7 +229,7 @@ public class DriveClass {
         double maxRotateSpeed = maxSpeed;
         double maxRotateSpeed = minSpeed;
          */
-        double minRotateSpeed = 0.18;
+        double minRotateSpeed = 0.14;
         double maxRotateSpeed = 1;
         double rotationSpeed;
         double derivative = 0, lastError=0;
