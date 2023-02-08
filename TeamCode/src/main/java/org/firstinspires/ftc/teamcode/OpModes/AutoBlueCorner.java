@@ -160,14 +160,58 @@ public class AutoBlueCorner extends LinearOpMode {
 
         }  // end of while
 
+        autoState = State.TEST;
+
+
         while(opModeIsActive()){
 
             switch (autoState) {
                 case TEST:
-                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(3000);
-                    //                    drive.driveDistance(.5, -90, 20);
+
+                    drive.ftclibDrive(0, 24);
+
+                    /*
+                    drive.ftclibRotate(45, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(-45, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(90, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(-90, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(-135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                     */
+
                     autoState = State.HALT;
 
                     break;
