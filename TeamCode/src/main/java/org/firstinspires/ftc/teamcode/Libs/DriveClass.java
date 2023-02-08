@@ -64,7 +64,7 @@ public class DriveClass {
         double derivative = 0, lastError=0, error=0;
         double integral = 0, drivePower = 0;
         ElapsedTime rotateTime = new ElapsedTime();
-        double maxDrivePower = 0.4;
+        double maxDrivePower = 0.7;
         double Kp = 0.05;
         double Ki = 0.001;
         double Kd = 0.01;
@@ -73,7 +73,7 @@ public class DriveClass {
 
         robot.motorLeftFront.resetEncoder();
         robot.motorRightFront.resetEncoder();
-        robot.motorRightFront.resetEncoder();
+        robot.motorLeftRear.resetEncoder();
         robot.motorRightRear.resetEncoder();
 
         opMode.sleep(100);  // allow time for encoder resets
@@ -137,13 +137,21 @@ public class DriveClass {
             opMode.telemetry.update();
             opMode.idle();
 
-            dashTelemetry.put("p20 - drive Telemetry Data", "");
-            dashTelemetry.put("p25 - Drive Power                  = ", drivePower);
-            dashTelemetry.put("p24 - Target Distance              = ", distance);
+            dashTelemetry.put("p00 - drive Telemetry Data", "");
+            dashTelemetry.put("p10 - Right Front Encoder          = ", robot.motorRightFront.getCurrentPosition());
+            dashTelemetry.put("p11 - Right Front Distance          = ", robot.motorRightFront.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+            dashTelemetry.put("p12 - Right Rear Encoder           = ", robot.motorRightRear.getCurrentPosition());
+            dashTelemetry.put("p13 - Right Rear Distance           = ", robot.motorRightRear.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+            dashTelemetry.put("p14 - Left Front Encoder           = ", robot.motorLeftFront.getCurrentPosition());
+            dashTelemetry.put("p15 - Left Front Distance           = ", robot.motorLeftFront.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+            dashTelemetry.put("p16 - Left Rear Encoder            = ", robot.motorLeftRear.getCurrentPosition());
+            dashTelemetry.put("p17 - Left Rear Distance            = ", robot.motorLeftRear.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
             dashTelemetry.put("p21 - rflrPower                    = ", rflrPower);
             dashTelemetry.put("p22 - lfrrPower                    = ", lfrrPower);
-            dashTelemetry.put("p26 - Distance Traveled            = ", distanceTraveled);
             dashTelemetry.put("p23 - PID IMU Angle X              = ", robot.imu.getAngles()[0]);
+            dashTelemetry.put("p24 - Target Distance              = ", distance);
+            dashTelemetry.put("p25 - Drive Power                  = ", drivePower);
+            dashTelemetry.put("p26 - Distance Traveled            = ", distanceTraveled);
             dashboard.sendTelemetryPacket(dashTelemetry);
 
 
@@ -151,12 +159,21 @@ public class DriveClass {
         motorsHaltFTCLib();
         setMotorVelocityZero();
 
-        dashTelemetry.put("p20 - drive Telemetry Data", "");
-        dashTelemetry.put("p24 - Target Distance              = ", distance);
+        dashTelemetry.put("p00 - drive Telemetry Data", "");
+        dashTelemetry.put("p10 - Right Front Encoder          = ", robot.motorRightFront.getCurrentPosition());
+        dashTelemetry.put("p11 - Right Front Distance          = ", robot.motorRightFront.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+        dashTelemetry.put("p12 - Right Rear Encoder           = ", robot.motorRightRear.getCurrentPosition());
+        dashTelemetry.put("p13 - Right Rear Distance           = ", robot.motorRightRear.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+        dashTelemetry.put("p14 - Left Front Encoder           = ", robot.motorLeftFront.getCurrentPosition());
+        dashTelemetry.put("p15 - Left Front Distance           = ", robot.motorLeftFront.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
+        dashTelemetry.put("p16 - Left Rear Encoder            = ", robot.motorLeftRear.getCurrentPosition());
+        dashTelemetry.put("p17 - Left Rear Distance            = ", robot.motorLeftRear.getCurrentPosition()/robot.DRIVE_TICKS_PER_INCH);
         dashTelemetry.put("p21 - rflrPower                    = ", rflrPower);
         dashTelemetry.put("p22 - lfrrPower                    = ", lfrrPower);
-        dashTelemetry.put("p26 - Distance Traveled            = ", distanceTraveled);
         dashTelemetry.put("p23 - PID IMU Angle X              = ", robot.imu.getAngles()[0]);
+        dashTelemetry.put("p24 - Target Distance              = ", distance);
+        dashTelemetry.put("p25 - Drive Power                  = ", drivePower);
+        dashTelemetry.put("p26 - Distance Traveled            = ", distanceTraveled);
         dashboard.sendTelemetryPacket(dashTelemetry);
 
     }   // close driveDistance method
@@ -180,11 +197,11 @@ public class DriveClass {
         double integral = 0;
         ElapsedTime rotateTime = new ElapsedTime();
         double error;
-        double Kp = 0.01;
-        double Ki = 0.0; //0.001;
-        double Kd = 0.0001; //0.02;
+        double Kp = 0.008;
+        double Ki = 0.00001; //0.001;
+        double Kd = 0.01; //0.02;
         double minRotateSpeed = 0.08;
-        double maxRotateSpeed = 0.8;
+        double maxRotateSpeed = 1;
         double rotationSpeed;
         double derivative = 0, lastError=0;
         double rightRotate = 0;
@@ -255,8 +272,8 @@ public class DriveClass {
             strafeFactor = robot.STRAFE_FACTOR;
         }
 
-        int totEncoder = Math.abs(robot.motorRF.getCurrentPosition()) + Math.abs(robot.motorLF.getCurrentPosition())
-                + Math.abs(robot.motorRR.getCurrentPosition()) + Math.abs(robot.motorLR.getCurrentPosition());
+        int totEncoder = Math.abs(robot.motorRightFront.getCurrentPosition()) + Math.abs(robot.motorLeftFront.getCurrentPosition())
+                + Math.abs(robot.motorRightRear.getCurrentPosition()) + Math.abs(robot.motorLeftRear.getCurrentPosition());
 
         double avgEncoder = totEncoder/ 4;
 
@@ -276,9 +293,9 @@ public class DriveClass {
      ******************************************************************************************/
     public void setDrivePowerFTCLib(double RF, double LF, double LR, double RR){
         robot.motorRightFront.set(RF);
-        robot.motorRightRear.set(LF);
-        robot.motorLeftFront.set(LR);
-        robot.motorLeftRear.set(RR);
+        robot.motorRightRear.set(RR);
+        robot.motorLeftFront.set(LF);
+        robot.motorLeftRear.set(LR);
     }   // end of setDrivePower method
 
     /******************************************************************************************

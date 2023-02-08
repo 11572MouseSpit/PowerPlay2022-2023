@@ -47,7 +47,7 @@ public class HWProfile {
 //    public final DistanceSensor armSensor = null;
 
 
-    public final double DRIVE_TICKS_PER_INCH = 40.6;      //temporary values => To be updated
+    public final double DRIVE_TICKS_PER_INCH = 44;      //temporary values => To be updated
     public final int LIFT_RESET = 0;
     public final int LIFT_LOW_JUNCTION = 380;
     public final int LIFT_MID_JUNCTION = 730;

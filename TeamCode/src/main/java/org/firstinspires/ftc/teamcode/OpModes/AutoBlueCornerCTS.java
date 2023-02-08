@@ -31,9 +31,9 @@ import java.util.Objects;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Auto: Blue Terminal", group = "Concept")
+@Autonomous(name = "CTS AUTO: Blue Terminal", group = "Concept")
 
-public class AutoBlueCorner extends LinearOpMode {
+public class AutoBlueCornerCTS extends LinearOpMode {
 
     FtcDashboard dashboard;
 
@@ -168,6 +168,63 @@ public class AutoBlueCorner extends LinearOpMode {
             switch (autoState) {
                 case TEST:
 
+                    /*
+                    drive.ftclibDrive(0, 24);
+                    sleep(5000);
+
+                    drive.ftclibDrive(180, 24);
+                    sleep(5000);
+
+                    drive.ftclibDrive(0, 5);
+                    sleep(5000);
+
+                    drive.ftclibDrive(180, 5);
+                    sleep(5000);
+
+                     */
+
+
+                    drive.ftclibRotate(45, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+
+                    drive.ftclibRotate(-45, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(90, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(-90, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(-135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(135, 1);
+                    sleep(2000);
+
+                    drive.ftclibRotate(0, 1);
+                    sleep(2000);
+
+
                     autoState = State.HALT;
 
                     break;
@@ -188,17 +245,14 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // drive forward to place the cone
-                    drive.newDriveDistance(0.3, 0, 4);
+                    drive.ftclibDrive(0, 4);
 
                     // turn towards the low junction
-                    turnError = drive.PIDRotate(-48, 1);
-                    while(Math.abs(turnError) > 1){
-                        turnError = drive.PIDRotate(-48, 1);
-                    }
+                    drive.ftclibRotate(-48, 1);
 
                     // drive forward to place the cone
                     // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
-                    overshoot = drive.newDriveDistance(0.3, 0, 1);
+                    drive.ftclibDrive( 0, 1);
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     // release the cone
@@ -208,13 +262,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(150);
 
                     // drive back to head towards the cone stack
-                    drive.newDriveDistance(0.3, 180, (3 + overshoot));
+                    drive.ftclibDrive(180, 3);
 
                     // point in the right direction
-                    turnError = drive.PIDRotate(0, 1);
-                    /*while(Math.abs(turnError) > 1){
-                        turnError = drive.PIDRotate(0, 1);
-                    }*/
+                    drive.ftclibRotate(0, 1);
 
                     // Lower the lift to place the cone
                     drive.resetLift(robot.LIFT_POWER_DOWN);
@@ -225,58 +276,52 @@ public class AutoBlueCorner extends LinearOpMode {
 
                 case CONE_5:
                     // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 55);
-                    drive.newDriveDistance(0.3, 180, 2);
+                    drive.ftclibDrive(0, 55);
+//                    drive.ftclibDrive(180, 2);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
 
-                    sleep(1000);
-
-                    // back into position to correct for overshoot
-                    drive.newDriveDistance(0.2, 180, overshoot);
+                    sleep(500);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
 
                     // turn towards the stack of cones
-                    turnError =  drive.PIDRotate(90, 1);
-                    while(Math.abs(turnError) > 1){
-                        turnError = drive.PIDRotate(90, 1);
-                    }
+                    drive.ftclibRotate(90, 1);
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 20);
+                    drive.ftclibDrive(0, 20);
 
                     // adjust
-                    drive.PIDRotate(90, 2);
+                    drive.ftclibRotate(90, 2);
 
                     // drive until it hits cone
 
                     elapsedTime.reset();
 
                     while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
-                        drive.setDrivePower(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
+                        drive.setDrivePowerFTCLib(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
                                 robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
                     }
 
                     //stop motors
-                    drive.motorsHalt();
+                    drive.motorsHaltFTCLib();
 
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(300);
 
-                    drive.newDriveDistance(0.4, 0, 2);
+                    drive.ftclibDrive(0, 2);
 
                     sleep(75);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 1);
+                    drive.ftclibDrive(180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
@@ -284,7 +329,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.7, 180, 16);
+                    drive.ftclibDrive(180, 16);
 
                     autoState = State.SCORE_LOW_JUNCTION2;
                     break;
@@ -296,14 +341,11 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // rotate to the 2nd low junction
-                    drive.PIDRotate(129, 1);
-
-                    // drive towards the low junction to place the cone
-//                    drive.newDriveDistance(0.3, 0, 0.3);
+                    drive.ftclibRotate(129, 1);
 
                     // drive forward to place the cone
                     // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
-                    overshoot = drive.newDriveDistance(0.3, 0, 1);
+                    drive.ftclibDrive(0, 1);
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     // open the claw to release the cone
@@ -315,13 +357,13 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(100);
 
                     // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 2);
+                    drive.ftclibDrive(180, 2);
 
                     // lower the lift to collect the next cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
 
                     //rotate towards the cone stack
-                    drive.PIDRotate(90, 1);
+                    drive.ftclibRotate(90, 1);
 
                     autoState = State.CONE_4;
                     break;
@@ -337,29 +379,29 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
 
                     // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 10);
-                    drive.PIDRotate(90,1);
+                    drive.ftclibDrive(0, 10);
+                    drive.ftclibRotate(90,1);
 
-                    drive.newDriveDistance(0.5, 0, 5);
+                    drive.ftclibDrive(0, 5);
 
                     // drive until it hits cone
 
                     elapsedTime.reset();
 
                     while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
-                        drive.setDrivePower(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
+                        drive.setDrivePowerFTCLib(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
                                 robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
                     }
 
                     //stop motors
-                    drive.motorsHalt();
+                    drive.motorsHaltFTCLib();
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.3, 180, 1);
+                    drive.ftclibDrive(180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
@@ -367,21 +409,21 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 18);
+                    drive.ftclibDrive(180, 18);
 
                     autoState = State.SCORE_HIGH_JUNCTION;
                     break;
 
                 case SCORE_HIGH_JUNCTION:
                     // rotate towards the mid junction
-                    drive.PIDRotate(-135, 2);
+                    drive.ftclibRotate(-135, 2);
 
                     // raise the lift to the mid junction
                     drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
                     sleep(400);
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 2);
+                    drive.ftclibDrive(0, 2);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
@@ -392,11 +434,11 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 2);
+                    drive.ftclibDrive(180, 2);
                     sleep(300);
 
                     // rotate back towards the cone stack
-                    drive.PIDRotate(-90,2);
+                    drive.ftclibRotate(-90,2);
                     sleep(300);
                     drive.resetLift(robot.LIFT_POWER_DOWN);
 
@@ -407,24 +449,24 @@ public class AutoBlueCorner extends LinearOpMode {
                     //Todo: Test this section of code
 
                     // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
+                    drive.ftclibDrive(0, 10);
 
                     // correct heading if necessary
-                    drive.PIDRotate(90,2);
+                    drive.ftclibRotate(90,2);
 
                     // Set the lift to the right heigth to grab the next cone
                     drive.liftPosition(robot.LIFT_CONE_3, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
 
                     // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
+                    drive.ftclibDrive(0, 10);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(750);
 
                     //back away from the stack slightly
-                    drive.newDriveDistance(0.4, 180, 1);
+                    drive.ftclibDrive(180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
@@ -432,7 +474,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 24);
+                    drive.ftclibDrive(180, 24);
 
                     autoState = State.SCORE_MID_JUNCTION;
                     break;
@@ -441,7 +483,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     //Todo: Test this section of code
 
                     // rotate towards the mid junction
-                    drive.PIDRotate(-160, 2);
+                    drive.ftclibRotate(-160, 2);
 
                     // raise the lift to the mid junction
                     drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
@@ -449,7 +491,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(500); // allow the robot to reach scoring positoin
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0);
+                    drive.ftclibDrive(0, 0);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
@@ -462,10 +504,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 0);
+                    drive.ftclibDrive(180, 0);
 
                     // rotate back towards the outside wall to pick up another cone
-                    drive.PIDRotate(90, 2);
+                    drive.ftclibRotate(90, 2);
 
                     autoState = State.CONE_2;
                     break;
@@ -475,24 +517,24 @@ public class AutoBlueCorner extends LinearOpMode {
                     //Todo: Test this section of code
 
                     // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
+                    drive.ftclibDrive(0, 10);
 
                     // correct heading if necessary
-                    drive.PIDRotate(90,2);
+                    drive.ftclibRotate(90,2);
 
                     // Set the lift to the right heigth to grab the next cone
                     drive.liftPosition(robot.LIFT_CONE_2, robot.LIFT_POWER_UP);
                     drive.fingerExtend();
 
                     // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
+                    drive.ftclibDrive(0, 10);
 
                     // close the claw to grab the cone
                     drive.closeClaw();
                     sleep(400);
 
                     //back away from the stack slightly
-                    drive.newDriveDistance(0.4, 180, 1);
+                    drive.ftclibDrive(180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
@@ -500,7 +542,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(300);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 48);
+                    drive.ftclibDrive(180, 48);
 
                     autoState = State.SCORE_HIGH_JUNCTION2;
                     break;
@@ -509,7 +551,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     //Todo: Test this section of code
 
                     // rotate towards the high junction
-                    drive.PIDRotate(-160, 2);
+                    drive.ftclibRotate(-160, 2);
 
                     // raise the lift to the mid junction
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
@@ -517,7 +559,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(300); // allow the robot to reach scoring position
 
                     // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 0);
+                    drive.ftclibDrive(0, 0);
 
                     // lower the lift to place the cone
                     drive.fingerRetract();
@@ -529,10 +571,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.openClaw();
 
                     // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 0);
+                    drive.ftclibDrive( 180, 0);
 
                     // rotate back towards the outside wall to pick up another cone
-                    drive.PIDRotate(90, 2);
+                    drive.ftclibRotate(90, 2);
 
                     autoState = State.PARK;
                     break;
@@ -541,15 +583,15 @@ public class AutoBlueCorner extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.3, 0,22);
+                        drive.ftclibDrive(0,22);
 
                     } else if (position == 2) {
                         // stay here with some tweaks
-                        drive.newDriveDistance(0.3, 180,2);
+                        drive.ftclibDrive(180,2);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.3, 180, 27);
+                        drive.ftclibDrive(180, 27);
                     }
 
                     autoState = State.HALT;
@@ -559,7 +601,7 @@ public class AutoBlueCorner extends LinearOpMode {
                 case HALT:
 
                     // Stop all motors
-                    drive.newMotorsHalt();
+                    drive.motorsHaltFTCLib();
 
                     // End the program
                     requestOpModeStop();
