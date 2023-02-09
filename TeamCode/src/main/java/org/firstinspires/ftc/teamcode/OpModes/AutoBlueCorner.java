@@ -65,6 +65,7 @@ public class AutoBlueCorner extends LinearOpMode {
     double position = 3;
     private final static HWProfile robot = new HWProfile();
     private LinearOpMode opMode = this;
+    State nextState = null;
 
     DriveClass drive = new DriveClass(robot, opMode);
 
@@ -175,7 +176,7 @@ public class AutoBlueCorner extends LinearOpMode {
                 case DETECT_CONE:
                     telemetry.addData("PARK POSITION = ", position);
                     telemetry.update();
-                    autoState = State.SCORE_LOW_JUNCTION;
+                    autoState = State.SCORE_MID_JUNCTION1;
                     break;
 
                 case SCORE_LOW_JUNCTION:
@@ -224,38 +225,17 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case CONE_5:
-                    // push the signal cone out of the way
-                    drive.newDriveDistance(0.6, 0, 55);
-                    drive.newDriveDistance(0.3, 180, 2);
+                    // drive to the stack
+                    drive.newDriveDistance(0.6, 0, 15);
 
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
-
-                    sleep(1000);
-
-                    // back into position to correct for overshoot
-                    drive.newDriveDistance(0.2, 180, overshoot);
-
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
-
-                    // turn towards the stack of cones
-                    turnError =  drive.PIDRotate(90, 1);
-                    while(Math.abs(turnError) > 1){
-                        turnError = drive.PIDRotate(90, 1);
-                    }
+                    sleep(500);
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
-                    // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 20);
-
-                    // adjust
-                    drive.PIDRotate(90, 2);
-
                     // drive until it hits cone
-
                     elapsedTime.reset();
 
                     while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
@@ -284,9 +264,10 @@ public class AutoBlueCorner extends LinearOpMode {
                     drive.fingerExtend();
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.7, 180, 16);
+                    drive.newDriveDistance(0.7, 180, 7);
 
-                    autoState = State.SCORE_LOW_JUNCTION2;
+                    nextState = State.CONE_4;
+                    autoState = State.SCORE_MID_JUNCTION2;
                     break;
 
                 case SCORE_LOW_JUNCTION2:
@@ -315,7 +296,7 @@ public class AutoBlueCorner extends LinearOpMode {
                     sleep(100);
 
                     // back away from the junction
-                    drive.newDriveDistance(0.5, 180, 2);
+                    drive.newDriveDistance(0.5, 180, 1);
 
                     // lower the lift to collect the next cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
@@ -327,23 +308,17 @@ public class AutoBlueCorner extends LinearOpMode {
                     break;
 
                 case CONE_4:
+                    // drive to the stack
+                    drive.newDriveDistance(0.6, 0, 15);
+
                     // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
+                    sleep(500);
 
                     // open the claw to grab the cone
                     drive.openClaw();
 
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
-
-                    // drive to the stack of cones
-                    drive.newDriveDistance(0.5, 0, 10);
-                    drive.PIDRotate(90,1);
-
-                    drive.newDriveDistance(0.5, 0, 5);
-
                     // drive until it hits cone
-
                     elapsedTime.reset();
 
                     while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
@@ -354,87 +329,138 @@ public class AutoBlueCorner extends LinearOpMode {
                     //stop motors
                     drive.motorsHalt();
 
+
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(500);
+                    sleep(300);
+
+                    drive.newDriveDistance(0.4, 0, 2);
+
+                    sleep(75);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.3, 180, 1);
+                    drive.newDriveDistance(0.5, 180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(200);
                     drive.fingerExtend();
-                    sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 18);
+                    drive.newDriveDistance(0.7, 180, 7);
 
-                    autoState = State.SCORE_HIGH_JUNCTION;
+                    nextState = State.PARK;
+                    autoState = State.SCORE_MID_JUNCTION2;
                     break;
 
-                case SCORE_HIGH_JUNCTION:
-                    // rotate towards the mid junction
-                    drive.PIDRotate(-135, 2);
+                case SCORE_MID_JUNCTION1:
+                    // rotate towards the high junction
+                    drive.closeClaw();
+                    drive.newDriveDistance(0.5, 0, 49);
+                    drive.PIDRotate(-38,1);
 
-                    // raise the lift to the mid junction
-                    drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(400);
+                    // raise the lift to the high junction
+                    drive.fingerExtend();
+                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
+                    drive.driveDistance(0.3, 180, 1);
+                    sleep(700);
 
-                    // drive towards the low junction to place the cone
-                    drive.newDriveDistance(0.3, 0, 2);
-
-                    // lower the lift to place the cone
+                    // lower the lift and open the claw
+//                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
+                    sleep(500);
                     drive.fingerRetract();
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-                    sleep(300);
-
-                    // open the claw to release the cone
                     drive.openClaw();
 
-                    // back away from the junction
-                    drive.newDriveDistance(0.3, 180, 2);
-                    sleep(300);
+                    sleep(200);
+                    // lower arm
+                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_DOWN);
+                    sleep(400);
+                    // move forward
+                    drive.newDriveDistance(0.3, 0, 1);
+                    sleep(200);
+
 
                     // rotate back towards the cone stack
-                    drive.PIDRotate(-90,2);
+                    drive.PIDRotate(90,2);
+                    drive.openClaw();
                     sleep(300);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
 
-                    autoState = State.PARK;
+                    autoState = State.CONE_5;
+                    break;
+
+                case SCORE_MID_JUNCTION2:
+                    drive.driveDistance(0.5, 180, 10);
+                    drive.PIDRotate(130, 1);
+
+
+                    // raise the lift to the mid junction and drive farther
+//                    drive.driveDistance(0.3, 180, 1);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(400);
+
+                    // lower the lift and open the claw
+//                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
+                    sleep(500);
+                    drive.openClaw();
+
+                    sleep(500);
+                    // back away from the junction and retract finger
+                    drive.fingerRetract();
+                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_DOWN);
+                    drive.newDriveDistance(0.3, 180, 2);
+                    sleep(500);
+
+                    // rotate back towards the cone stack
+                    drive.PIDRotate(90,2);
+                    sleep(300);
+
+                    autoState = nextState; // variable that is the next state (CONE_4, or PARK)
                     break;
 
                 case CONE_3:
-                    //Todo: Test this section of code
+                    // drive to the stack
+                    drive.newDriveDistance(0.6, 0, 15);
 
-                    // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
-
-                    // correct heading if necessary
-                    drive.PIDRotate(90,2);
-
-                    // Set the lift to the right heigth to grab the next cone
+                    // raise the lift to collect a cone
                     drive.liftPosition(robot.LIFT_CONE_3, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
+                    sleep(500);
 
-                    // drive forward to pick up another cone
-                    drive.newDriveDistance(0.5, 0, 10);
+                    // open the claw to grab the cone
+                    drive.openClaw();
+
+                    // drive until it hits cone
+                    elapsedTime.reset();
+
+                    while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
+                        drive.setDrivePower(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
+                                robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
+                    }
+
+                    //stop motors
+                    drive.motorsHalt();
+
 
                     // close the claw to grab the cone
                     drive.closeClaw();
-                    sleep(750);
+                    sleep(300);
 
-                    //back away from the stack slightly
-                    drive.newDriveDistance(0.4, 180, 1);
+                    drive.newDriveDistance(0.4, 0, 2);
+
+                    sleep(75);
+
+                    // back away from the stack of cones
+                    drive.newDriveDistance(0.5, 180, 1);
 
                     // lift the cone off the stack
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
+                    sleep(200);
                     drive.fingerExtend();
-                    sleep(500);
 
                     // back away from the stack of cones
-                    drive.newDriveDistance(0.5, 180, 24);
+                    drive.newDriveDistance(0.7, 180, 7);
 
-                    autoState = State.SCORE_MID_JUNCTION;
+                    nextState = State.PARK;
+                    autoState = State.SCORE_MID_JUNCTION2;
                     break;
 
                 case SCORE_MID_JUNCTION:
@@ -590,7 +616,7 @@ public class AutoBlueCorner extends LinearOpMode {
 
     enum State {
         TEST, DETECT_CONE, SCORE_LOW_JUNCTION, SCORE_LOW_JUNCTION2, CONE_5, SCORE_CORNER, CONE_4, CONE_3,
-        CONE_2, CONE_1, SCORE_HIGH_JUNCTION, SCORE_MID_JUNCTION, SCORE_HIGH_JUNCTION2, PARK, HALT
+        CONE_2, CONE_1, SCORE_HIGH_JUNCTION, SCORE_MID_JUNCTION, SCORE_HIGH_JUNCTION2, PARK, SCORE_MID_JUNCTION1, SCORE_MID_JUNCTION2, HALT
     }   // end of enum State
 
     /**

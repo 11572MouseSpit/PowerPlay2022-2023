@@ -634,6 +634,7 @@ public class DriveClass {
 
     public void closeClaw(){
         robot.servoGrabber.setPosition(robot.CLAW_CLOSE);
+        this.fingerRetract();
     }
 
     public void openClaw(){
