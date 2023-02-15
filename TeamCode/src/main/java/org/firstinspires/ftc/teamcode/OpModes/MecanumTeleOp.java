@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "Teleop Mode", group = "Competition")
 
@@ -41,6 +44,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
         DriveClass drive = new DriveClass(robot, opMode);
 
+        SampleMecanumDrive beans = new SampleMecanumDrive(hardwareMap);
+        //sets motors to run without encoders
+        beans.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         telemetry.addData("Ready to Run: ","GOOD LUCK");
         telemetry.update();
 
@@ -51,7 +58,17 @@ public class MecanumTeleOp extends LinearOpMode {
             /*******************************************
              ****** Mecanum Drive Control section ******
              *******************************************/
-            if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
+            beans.setWeightedDrivePower(
+                    new Pose2d(
+                            -gamepad1.left_stick_y*1,
+                            -gamepad1.left_stick_x*1,
+                            -gamepad1.right_stick_x*0.8
+                    )
+            );
+
+            beans.update();
+
+            /*if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
                 theta = robot.imu.getAbsoluteHeading() + 90;
 //                        robot.imu.getAngularOrientation().firstAngle + 90;
             } else {
@@ -87,7 +104,7 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             // Control which direction is forward and which is backward from the driver POV
- /*           if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
+            if (gamepad1.y && (currentTime.time() - buttonPress) > 0.3) {
                 if (theta2 == 180) {
                     theta2 = 0;
                 } else {
@@ -171,17 +188,21 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             // Provide user feedback
-            telemetry.addData("V1 = ", v1);
+            //telemetry.addData("V1 = ", v1);
             telemetry.addData("elapsed time = ", elapsedTime.time());
-            telemetry.addData("V2 = ", v2);
+            /*telemetry.addData("V2 = ", v2);
             telemetry.addData("V3 = ", v3);
-            telemetry.addData("V4 = ", v4);
+            telemetry.addData("V4 = ", v4);*/
             telemetry.addData("Motor Left Lift = ", robot.motorLeftLift.getCurrentPosition());
             telemetry.addData("Motor Right Lift = ", robot.motorRightLift.getCurrentPosition());
-            telemetry.addData("Theta = ", theta);
-            telemetry.addData("Theta2 = ", theta);
-            telemetry.addData("IMU Value: ", theta);
+            //telemetry.addData("Theta = ", theta);
+            //telemetry.addData("Theta2 = ", theta);
+            //telemetry.addData("IMU Value: ", theta);
             telemetry.addData("robot rotation: ", OldRotation);
+            Pose2d poseEstimate = beans.getPoseEstimate();
+            telemetry.addData("a", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
 
         }   // end of while(opModeIsActive)
