@@ -5,6 +5,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 import java.util.Objects;
@@ -65,8 +68,9 @@ public class AutoBlueCornerCTS extends LinearOpMode {
     double position = 3;
     private final static HWProfile robot = new HWProfile();
     private LinearOpMode opMode = this;
+    private SampleMecanumDrive drive = null;
 
-    DriveClass drive = new DriveClass(robot, opMode);
+    DriveClass oldDrive = new DriveClass(robot, opMode);
 
     @Override
 
@@ -85,6 +89,7 @@ public class AutoBlueCornerCTS extends LinearOpMode {
         State autoState = State.DETECT_CONE;
 
         robot.init(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
 
         dashboard = FtcDashboard.getInstance();
         TelemetryPacket dashTelemetry = new TelemetryPacket();
@@ -120,41 +125,6 @@ public class AutoBlueCornerCTS extends LinearOpMode {
 
                     // step through the list of recognitions and display image position/size information for each one
                     // Note: "Image number" refers to the randomized image orientation/number
-                    for (Recognition recognition : updatedRecognitions) {
-                        double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                        double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                        double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                        double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                        telemetry.addData(""," ");
-                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                        telemetry.addData("Park Position = ", position);
-                        telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                        telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        telemetry.addData("Motor Left Rear: ", robot.motorLeftRear.getCurrentPosition());
-                        telemetry.addData("Motor Left Front: ", robot.motorLeftFront.getCurrentPosition());
-                        telemetry.addData("Motor Right Rear: ", robot.motorRightRear.getCurrentPosition());
-                        telemetry.addData("Motor Right Front: ", robot.motorRightFront.getCurrentPosition());
-                        if(Objects.equals(recognition.getLabel(), "circle")){
-                            position =1;
-                        } else if(Objects.equals(recognition.getLabel(), "triangle")){
-                            position = 2;
-                        } else position = 3;
-
-                        dashTelemetry.put("IMU Value :" , drive.getZAngle());
-                        dashTelemetry.put("Motor Left Rear: ", robot.motorLeftRear.getCurrentPosition());
-                        dashTelemetry.put("Motor Left Front: ", robot.motorLeftFront.getCurrentPosition());
-                        dashTelemetry.put("Motor Right Rear: ", robot.motorRightRear.getCurrentPosition());
-                        dashTelemetry.put("Motor Right Front: ", robot.motorRightFront.getCurrentPosition());
-                        dashTelemetry.put("Motor Left Lift: ", robot.motorLeftLift.getCurrentPosition());
-                        dashTelemetry.put("Motor Right Lift: ", robot.motorRightLift.getCurrentPosition());
-                        dashTelemetry.put("# Objects Detected: ", updatedRecognitions.size());
-                        dashTelemetry.put("Image             : ", recognition.getLabel());
-                        dashTelemetry.put("Position          : ", position);
-                        dashTelemetry.put("Confidence        : ", recognition.getConfidence() * 100 );
-                        dashboard.sendTelemetryPacket(dashTelemetry);
-                        telemetry.update();
-                    }
                 }
             }
 
@@ -164,452 +134,15 @@ public class AutoBlueCornerCTS extends LinearOpMode {
 
 
         while(opModeIsActive()){
-
-            switch (autoState) {
-                case TEST:
-
-                    /*
-                    drive.ftclibDrive(0, 24);
-                    sleep(5000);
-
-                    drive.ftclibDrive(180, 24);
-                    sleep(5000);
-
-                    drive.ftclibDrive(0, 5);
-                    sleep(5000);
-
-                    drive.ftclibDrive(180, 5);
-                    sleep(5000);
-
-                     */
-
-
-                    drive.ftclibRotate(45, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-
-                    drive.ftclibRotate(-45, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(90, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(-90, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(135, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(-135, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(135, 1);
-                    sleep(2000);
-
-                    drive.ftclibRotate(0, 1);
-                    sleep(2000);
-
-
-                    autoState = State.HALT;
-
-                    break;
-
-                case DETECT_CONE:
-                    telemetry.addData("PARK POSITION = ", position);
-                    telemetry.update();
-                    autoState = State.SCORE_LOW_JUNCTION;
-                    break;
-
-                case SCORE_LOW_JUNCTION:
-                    // close the claw to grab the cone
-                    drive.closeClaw();
-                    sleep(500);
-
-                    // raise the lift to place the cone
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-
-                    // drive forward to place the cone
-                    drive.ftclibDrive(0, 4);
-
-                    // turn towards the low junction
-                    drive.ftclibRotate(-48, 1);
-
-                    // drive forward to place the cone
-                    // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
-                    drive.ftclibDrive( 0, 1);
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-
-                    // release the cone
-                    drive.fingerRetract();
-                    sleep(75);
-                    drive.openClaw();
-                    sleep(150);
-
-                    // drive back to head towards the cone stack
-                    drive.ftclibDrive(180, 3);
-
-                    // point in the right direction
-                    drive.ftclibRotate(0, 1);
-
-                    // Lower the lift to place the cone
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    drive.fingerRetract();
-
-                    autoState = State.CONE_5;
-                    break;
-
-                case CONE_5:
-                    // push the signal cone out of the way
-                    drive.ftclibDrive(0, 55);
-//                    drive.ftclibDrive(180, 2);
-
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
-
-                    sleep(500);
-
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_5, robot.LIFT_POWER_UP);
-
-                    // turn towards the stack of cones
-                    drive.ftclibRotate(90, 1);
-
-                    // open the claw to grab the cone
-                    drive.openClaw();
-
-                    // drive to the stack of cones
-                    drive.ftclibDrive(0, 20);
-
-                    // adjust
-                    drive.ftclibRotate(90, 2);
-
-                    // drive until it hits cone
-
-                    elapsedTime.reset();
-
-                    while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
-                        drive.setDrivePowerFTCLib(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
-                                robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
-                    }
-
-                    //stop motors
-                    drive.motorsHaltFTCLib();
-
-
-                    // close the claw to grab the cone
-                    drive.closeClaw();
-                    sleep(300);
-
-                    drive.ftclibDrive(0, 2);
-
-                    sleep(75);
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 1);
-
-                    // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(200);
-                    drive.fingerExtend();
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 16);
-
-                    autoState = State.SCORE_LOW_JUNCTION2;
-                    break;
-
-                case SCORE_LOW_JUNCTION2:
-                    // raise the lift to the low junction
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(200);
-                    drive.fingerExtend();
-
-                    // rotate to the 2nd low junction
-                    drive.ftclibRotate(129, 1);
-
-                    // drive forward to place the cone
-                    // track overshoot drive distance so that a correction in the reverse direction can be made if necessary
-                    drive.ftclibDrive(0, 1);
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-
-                    // open the claw to release the cone
-                    drive.openClaw();
-                    drive.fingerRetract();
-
-                    //drop arm
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-                    sleep(100);
-
-                    // back away from the junction
-                    drive.ftclibDrive(180, 2);
-
-                    // lower the lift to collect the next cone
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-
-                    //rotate towards the cone stack
-                    drive.ftclibRotate(90, 1);
-
-                    autoState = State.CONE_4;
-                    break;
-
-                case CONE_4:
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
-
-                    // open the claw to grab the cone
-                    drive.openClaw();
-
-                    // raise the lift to collect a cone
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_UP);
-
-                    // drive to the stack of cones
-                    drive.ftclibDrive(0, 10);
-                    drive.ftclibRotate(90,1);
-
-                    drive.ftclibDrive(0, 5);
-
-                    // drive until it hits cone
-
-                    elapsedTime.reset();
-
-                    while(robot.sensorCone.getDistance(DistanceUnit.INCH) > 2 && elapsedTime.time() <= robot.WAIT_DRIVE_TO_CONE) {
-                        drive.setDrivePowerFTCLib(robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER,
-                                robot.DRIVE_TO_CONE_POWER, robot.DRIVE_TO_CONE_POWER);
-                    }
-
-                    //stop motors
-                    drive.motorsHaltFTCLib();
-
-                    // close the claw to grab the cone
-                    drive.closeClaw();
-                    sleep(500);
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 1);
-
-                    // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(500);
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 18);
-
-                    autoState = State.SCORE_HIGH_JUNCTION;
-                    break;
-
-                case SCORE_HIGH_JUNCTION:
-                    // rotate towards the mid junction
-                    drive.ftclibRotate(-135, 2);
-
-                    // raise the lift to the mid junction
-                    drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
-                    sleep(400);
-
-                    // drive towards the low junction to place the cone
-                    drive.ftclibDrive(0, 2);
-
-                    // lower the lift to place the cone
-                    drive.fingerRetract();
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-                    sleep(300);
-
-                    // open the claw to release the cone
-                    drive.openClaw();
-
-                    // back away from the junction
-                    drive.ftclibDrive(180, 2);
-                    sleep(300);
-
-                    // rotate back towards the cone stack
-                    drive.ftclibRotate(-90,2);
-                    sleep(300);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-
-                    autoState = State.PARK;
-                    break;
-
-                case CONE_3:
-                    //Todo: Test this section of code
-
-                    // drive forward to pick up another cone
-                    drive.ftclibDrive(0, 10);
-
-                    // correct heading if necessary
-                    drive.ftclibRotate(90,2);
-
-                    // Set the lift to the right heigth to grab the next cone
-                    drive.liftPosition(robot.LIFT_CONE_3, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-
-                    // drive forward to pick up another cone
-                    drive.ftclibDrive(0, 10);
-
-                    // close the claw to grab the cone
-                    drive.closeClaw();
-                    sleep(750);
-
-                    //back away from the stack slightly
-                    drive.ftclibDrive(180, 1);
-
-                    // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(500);
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 24);
-
-                    autoState = State.SCORE_MID_JUNCTION;
-                    break;
-
-                case SCORE_MID_JUNCTION:
-                    //Todo: Test this section of code
-
-                    // rotate towards the mid junction
-                    drive.ftclibRotate(-160, 2);
-
-                    // raise the lift to the mid junction
-                    drive.liftPosition(robot.LIFT_MID_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(500); // allow the robot to reach scoring positoin
-
-                    // drive towards the low junction to place the cone
-                    drive.ftclibDrive(0, 0);
-
-                    // lower the lift to place the cone
-                    drive.fingerRetract();
-                    drive.liftPosition(robot.LIFT_CONE_4, robot.LIFT_POWER_DOWN);
-                    sleep(100);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    sleep(300);
-
-                    // open the claw to release the cone
-                    drive.openClaw();
-
-                    // back away from the junction
-                    drive.ftclibDrive(180, 0);
-
-                    // rotate back towards the outside wall to pick up another cone
-                    drive.ftclibRotate(90, 2);
-
-                    autoState = State.CONE_2;
-                    break;
-
-
-                case CONE_2:
-                    //Todo: Test this section of code
-
-                    // drive forward to pick up another cone
-                    drive.ftclibDrive(0, 10);
-
-                    // correct heading if necessary
-                    drive.ftclibRotate(90,2);
-
-                    // Set the lift to the right heigth to grab the next cone
-                    drive.liftPosition(robot.LIFT_CONE_2, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-
-                    // drive forward to pick up another cone
-                    drive.ftclibDrive(0, 10);
-
-                    // close the claw to grab the cone
-                    drive.closeClaw();
-                    sleep(400);
-
-                    //back away from the stack slightly
-                    drive.ftclibDrive(180, 1);
-
-                    // lift the cone off the stack
-                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(300);
-
-                    // back away from the stack of cones
-                    drive.ftclibDrive(180, 48);
-
-                    autoState = State.SCORE_HIGH_JUNCTION2;
-                    break;
-
-                case SCORE_HIGH_JUNCTION2:
-                    //Todo: Test this section of code
-
-                    // rotate towards the high junction
-                    drive.ftclibRotate(-160, 2);
-
-                    // raise the lift to the mid junction
-                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, robot.LIFT_POWER_UP);
-                    drive.fingerExtend();
-                    sleep(300); // allow the robot to reach scoring position
-
-                    // drive towards the low junction to place the cone
-                    drive.ftclibDrive(0, 0);
-
-                    // lower the lift to place the cone
-                    drive.fingerRetract();
-                    sleep(100);
-                    drive.resetLift(robot.LIFT_POWER_DOWN);
-                    sleep(200);
-
-                    // open the claw to release the cone
-                    drive.openClaw();
-
-                    // back away from the junction
-                    drive.ftclibDrive( 180, 0);
-
-                    // rotate back towards the outside wall to pick up another cone
-                    drive.ftclibRotate(90, 2);
-
-                    autoState = State.PARK;
-                    break;
-
-                case PARK:
-
-                    if(position == 1) {
-                        // drive forward to park position 1
-                        drive.ftclibDrive(0,22);
-
-                    } else if (position == 2) {
-                        // stay here with some tweaks
-                        drive.ftclibDrive(180,2);
-
-                    } else {
-                        // drive to park position 3
-                        drive.ftclibDrive(180, 27);
-                    }
-
-                    autoState = State.HALT;
-
-                    break;
-
-                case HALT:
-
-                    // Stop all motors
-                    drive.motorsHaltFTCLib();
-
-                    // End the program
-                    requestOpModeStop();
-
-                    break;
-            }   // end of the switch state
-
-
+            drive.update();
+            Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(10)
+                    .build();
+
+            drive.followTrajectory(myTrajectory);
+
+            // End the program
+            requestOpModeStop();
         } // end of while(opModeIsActive())
 
     }
