@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.List;
 import java.util.Objects;
 
+
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine which image is being presented to the robot.
@@ -191,7 +192,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                 case JUST_MOVE_TEST:
                     drive.closeClaw();
                     sleep(200);
-
+                    //LOW JUNCTION 1
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // temp wait for recording, remove later
                             // .waitSeconds(10)
@@ -200,105 +201,163 @@ public class AutoRedCornerRR extends LinearOpMode {
                                 drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
                                 drive.fingerExtend();
                             })
-                            .forward(5)
-                            .turn(Math.toRadians(-45))
-                            .forward(2)
+//                            .forward(5)
+//                            .turn(Math.toRadians(-45))
+//                            .forward(1)
+                            .lineToLinearHeading(new Pose2d(1 + xOffset, 24 + yOffset, Math.toRadians(-45)))
+//                            .forward(2)
+                            .build();
+
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+                    sleep(300);
+                    //drop cone
+                    drive.openClaw();
+                    drive.fingerRetract();
+                    sleep(400);
+                    drive.liftPosition(robot.LIFT_CONE_5, 0.3);
+
+                    //CONE 5
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // drop cone marker
-                            .addDisplacementMarker(() -> {
-                                drive.openClaw();
-                                drive.fingerRetract();
-                                drive.liftPosition(robot.LIFT_CONE_5, 0.3);
-                            })
-                            .waitSeconds(0.5)
-                            .back(3)
-                            .turn(Math.toRadians(45))
+                            .back(2)
+//                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 48 + yOffset, Math.toRadians(180)))
 
                             // go for cone 5
 
-                            .forward(25)
+                            .forward(24)
                             .addDisplacementMarker(() -> {
-                                drive.closeClaw();
+                                drive.openClaw();
                                 sleep(200);
-                                drive.liftPosition(robot.LIFT_HIGH_JUNCTION, 0.5);
+                                drive.liftPosition(robot.LIFT_CONE_5, 0.5);
                                 sleep(300);
                             })
+                            .build();
 
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+                    //GET CONE
+                    drive.closeClaw();
+                    sleep(400);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
+                    sleep(300);
+
+                    //HIGH JUNCTION
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             //score high junction
 
                             //.back(25)
                             //.turn(Math.toRadians(-225))
                             .back(5)
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(45)))
-                            .forward(6)
+                            .lineToLinearHeading(new Pose2d(-4 + xOffset, 50 + yOffset, Math.toRadians(45)))
+                            // correct error
+                            //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
+//                            .forward(6)
                             // drop cone
-                            .addDisplacementMarker(() -> {
-                                //drive.openClaw();
-                            })
-                            .waitSeconds(0.2)
-                            .back(6)
+                            .build();
+
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+                    //DROP CONE
+                    sleep(50);
+                    drive.fingerExtend();
+                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, 0.5);
+                    sleep(1000);
+                    drive.openClaw();
+                    drive.fingerRetract();
+                    sleep(600);
+                    drive.liftPosition(robot.LIFT_CONE_4, 0.3);
+                    sleep(300);
+
+                    //CONE 4
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
+//                            .back(6)
 
                             //go for cone 4
 
-                            .addDisplacementMarker(() -> {
-                                //drive.liftPosition(robot.LIFT_CONE_4, 0.3);
-                            })
                             // .turn(Math.toRadians(135))
                             // .forward(25)
-                            .lineToLinearHeading(new Pose2d(-15 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .forward(10)
-                            // grab
-                            .addDisplacementMarker(() -> {
-                                //drive.closeClaw();
-                                //drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.5);
-                            })
-                            .waitSeconds(0.3)
+//                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
+                            .lineTo(new Vector2d(-2 + xOffset, 50 + yOffset)) // robot at -5, 50 (needs to be corrected)
+                            .turn(Math.toRadians(135))
+                            //correct
+                            .forward(26)
+                            .build();
 
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+                    // close claw
+                    drive.closeClaw();
+                    drive.fingerRetract();
+                    sleep(400);
+                    drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.5);
+                    drive.fingerExtend();
+                    sleep(300);
+
+                    //MID JUNCTION
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // score mid junction
 
                             .back(5)
 
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(-45)))
-                            .forward(6)
-                            // drop cone
-                            .addDisplacementMarker(() -> {
-                                //drive.closeClaw();
-                            })
-                            .waitSeconds(0.2)
-                            .back(6)
-                            // set to lift_cone_3
-                            .addDisplacementMarker(() -> {
-                                //drive.liftPosition(robot.LIFT_CONE_3, 0.3);
-                            })
+                            .lineToLinearHeading(new Pose2d(-5 + xOffset, 48 + yOffset, Math.toRadians(-45)))
+                            //correct
+                            //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
+//                            .forward(6)
+                            .build();
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+                    //drop cone
+                    drive.openClaw();
+                    drive.fingerRetract();
+                    sleep(300);
+                    drive.liftPosition(robot.LIFT_CONE_3, 0.4);
+
+                    //CONE 3
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
 
                             // go for cone 3
 
-                            .lineToLinearHeading(new Pose2d(-15 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .forward(10)
+//                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
+                            .lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
+                            .turn(Math.toRadians(225))
+                            .forward(26)
                             // grab cone
-                            .addDisplacementMarker(() -> {
-                                //drive.closeClaw();
-                                //drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
-                            })
-                            .waitSeconds(0.3)
+                            .build();
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
 
+                    //
+                    drive.closeClaw();
+                    sleep(200);
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
+                    sleep(300);
+
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // score 2nd low
 
                             .back(5)
                             .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(225)))
-                            .forward(10)
+                            //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
+//                            .forward(10)
                             // drop cone
                             .addDisplacementMarker(() -> {
-                                //drive.openClaw();
+                                drive.openClaw();
+                                sleep(200);
                             })
-                            .waitSeconds(0.2)
-                            .back(10)
+//                            .back(10)
 
                             // park
 
                             .addDisplacementMarker(() -> {
-                                //drive.liftPosition(robot.LIFT_CONE_3, 0.5);
+                                drive.liftPosition(robot.LIFT_LOW_JUNCTION, robot.LIFT_POWER_DOWN);
                             })
                             .turn(Math.toRadians(-45))
                             .forward(1)
@@ -307,8 +366,9 @@ public class AutoRedCornerRR extends LinearOpMode {
                             // leave at the end of the program
                             .build();
 
-                    rrDrive.followTrajectorySequence(trajectory);
-                    autoState = State.PARK;
+
+//                    rrDrive.followTrajectorySequence(trajectory);
+                    autoState = State.HALT;
                     break;
 
 

@@ -53,10 +53,10 @@ public class HWProfile {
     public final int LIFT_MID_JUNCTION = 730;
     public final int LIFT_HIGH_JUNCTION = 1270;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 170;
+    public final int LIFT_CONE_5 = 180;
     public final double CONE_WAIT_TIME = 4;
-    public final int LIFT_CONE_4 = 150  ;
-    public final int LIFT_CONE_3 = 125;
+    public final int LIFT_CONE_4 = 160  ;
+    public final int LIFT_CONE_3 = 135;
     public final int LIFT_CONE_2 = 60;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
     public final double LIFT_POWER_UP = 0.7;

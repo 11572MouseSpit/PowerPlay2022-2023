@@ -634,11 +634,12 @@ public class DriveClass {
 
     public void closeClaw(){
         robot.servoGrabber.setPosition(robot.CLAW_CLOSE);
-        this.fingerRetract();
+//        this.fingerExtend();
     }
 
     public void openClaw(){
         robot.servoGrabber.setPosition(robot.CLAW_OPEN);
+        fingerRetract();
     }
 
     public void fingerExtend() { robot.servoFinger.setPosition(robot.FINGER_OUT);}
