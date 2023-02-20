@@ -224,7 +224,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .back(2)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 48 + yOffset, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-5 + xOffset, 48 + yOffset, Math.toRadians(180)))
 
                             // go for cone 5
 
@@ -257,7 +257,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-4 + xOffset, 50 + yOffset, Math.toRadians(51)))
+                            .lineToLinearHeading(new Pose2d(-6 + xOffset, 50 + yOffset, Math.toRadians(51)))
                             .back(2)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
