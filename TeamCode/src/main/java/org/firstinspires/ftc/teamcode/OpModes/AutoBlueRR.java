@@ -77,7 +77,7 @@ public class AutoBlueRR extends LinearOpMode {
     DriveClass drive = new DriveClass(robot, opMode);
     TrajectorySequence trajectory = null;
     private double xOffset = 36;
-    private double yOffset = 63;
+    private double yOffset = -63;
     private Pose2d currentPose = new Pose2d(xOffset, yOffset, Math.toRadians(90));
 
     @Override
@@ -204,8 +204,8 @@ public class AutoBlueRR extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(0 + xOffset, 24 + yOffset, Math.toRadians(45)))
-                            .back(1)
+                            .lineToLinearHeading(new Pose2d(36, -39, Math.toRadians(225)))
+                            //.back(1)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -224,7 +224,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(2)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(-5 + xOffset, 48 + yOffset, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(41, -15, Math.toRadians(0)))
 
                             // go for cone 5
 
@@ -257,8 +257,8 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-6 + xOffset, 50 + yOffset, Math.toRadians(51)))
-                            .back(2)
+                            .lineToLinearHeading(new Pose2d(42, -13, Math.toRadians(135)))
+                            .back(3)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -291,8 +291,8 @@ public class AutoBlueRR extends LinearOpMode {
                             // .turn(Math.toRadians(135))
                             // .forward(25)
 //                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .lineTo(new Vector2d(-2 + xOffset, 53 + yOffset)) // robot at -5, 50 (needs to be corrected)
-                            .turn(Math.toRadians(135))
+                            .lineTo(new Vector2d(38, -14)) // robot at -5, 50 (needs to be corrected)
+                            .turn(Math.toRadians(-135))
                             //correct
                             .forward(29)
                             .build();
@@ -320,8 +320,8 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-4.5 + xOffset, 51 + yOffset, Math.toRadians(-50)))
-                            .back(1.5)
+                            .lineToLinearHeading(new Pose2d(44, -13, Math.toRadians(235)))
+                            //.back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -340,7 +340,7 @@ public class AutoBlueRR extends LinearOpMode {
                     //CONE 3
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
 
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(-45)))
+                            .lineToLinearHeading(new Pose2d(-38, -13, Math.toRadians(-45)))
                             .turn(Math.toRadians(225))
                             .forward(26)
                             // grab cone
@@ -361,7 +361,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(3)
 
                             //turn to parking position
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 51 + yOffset, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(38, -12, Math.toRadians(0)))
 
                             // leave at the end of the program
                             .build();
@@ -424,7 +424,7 @@ public class AutoBlueRR extends LinearOpMode {
                     rrDrive.waitForIdle();
 
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
-                            .splineTo(new Vector2d(0 + xOffset, 30 + yOffset), Math.toRadians(180))
+                            .splineTo(new Vector2d(36, -33), Math.toRadians(180))
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
@@ -435,15 +435,15 @@ public class AutoBlueRR extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.45, 180,33);
+                        drive.newDriveDistance(0.45, 180,18);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.45, 180,5);
+                        drive.newDriveDistance(0.45, 0,4);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 0, 15);
+                        drive.newDriveDistance(0.45, 0, 28);
                     }
 
                     autoState = State.HALT;

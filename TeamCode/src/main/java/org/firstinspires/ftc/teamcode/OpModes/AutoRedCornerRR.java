@@ -204,7 +204,7 @@ public class AutoRedCornerRR extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(0 + xOffset, 24 + yOffset, Math.toRadians(-45)))
+                            .lineToLinearHeading(new Pose2d(-36, -39, Math.toRadians(-45)))
                             .back(1)
                             .build();
 
@@ -224,7 +224,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .back(2)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(-5 + xOffset, 48 + yOffset, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-41, -15, Math.toRadians(180)))
 
                             // go for cone 5
 
@@ -257,7 +257,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-6 + xOffset, 50 + yOffset, Math.toRadians(51)))
+                            .lineToLinearHeading(new Pose2d(-42, -13, Math.toRadians(51)))
                             .back(2)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
@@ -291,7 +291,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             // .turn(Math.toRadians(135))
                             // .forward(25)
 //                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .lineTo(new Vector2d(-2 + xOffset, 53 + yOffset)) // robot at -5, 50 (needs to be corrected)
+                            .lineTo(new Vector2d(-2 + xOffset, -10)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(135))
                             //correct
                             .forward(29)
@@ -320,7 +320,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-4.5 + xOffset, 51 + yOffset, Math.toRadians(-50)))
+                            .lineToLinearHeading(new Pose2d(-40.5, -12, Math.toRadians(-50)))
                             .back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
@@ -340,7 +340,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                     //CONE 3
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
 
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(-45)))
+                            .lineToLinearHeading(new Pose2d(-38, -13, Math.toRadians(-45)))
                             .turn(Math.toRadians(225))
                             .forward(26)
                             // grab cone
@@ -361,7 +361,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .back(3)
 
                             //turn to parking position
-                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 51 + yOffset, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(-38, -12, Math.toRadians(0)))
 
                             // leave at the end of the program
                             .build();
@@ -424,7 +424,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                     rrDrive.waitForIdle();
 
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
-                            .splineTo(new Vector2d(0 + xOffset, 30 + yOffset), Math.toRadians(180))
+                            .splineTo(new Vector2d(-36, -33), Math.toRadians(180))
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
