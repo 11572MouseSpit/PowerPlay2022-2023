@@ -228,7 +228,7 @@ public class AutoRedCornerRR extends LinearOpMode {
 
                             // go for cone 5
 
-                            .forward(23)
+                            .forward(24)
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(200);
@@ -258,7 +258,7 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .back(4)
 
                             .lineToLinearHeading(new Pose2d(-4 + xOffset, 50 + yOffset, Math.toRadians(51)))
-                            .back(1.5)
+                            .back(2)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -273,6 +273,9 @@ public class AutoRedCornerRR extends LinearOpMode {
                     drive.fingerExtend();
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, 0.5);
                     sleep(1000);
+                    drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.5);
+                    drive.newDriveDistance(0.3, 0, 3); // drive forward to land cone
+                    sleep(400);
                     drive.openClaw();
                     drive.fingerRetract();
                     sleep(600);
@@ -288,10 +291,10 @@ public class AutoRedCornerRR extends LinearOpMode {
                             // .turn(Math.toRadians(135))
                             // .forward(25)
 //                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .lineTo(new Vector2d(-3.75 + xOffset, 50 + yOffset)) // robot at -5, 50 (needs to be corrected)
+                            .lineTo(new Vector2d(-2 + xOffset, 53 + yOffset)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(135))
                             //correct
-                            .forward(26)
+                            .forward(29)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -317,8 +320,8 @@ public class AutoRedCornerRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-4.5 + xOffset, 51 + yOffset, Math.toRadians(-47)))
-                            .back(2.75)
+                            .lineToLinearHeading(new Pose2d(-4.5 + xOffset, 51 + yOffset, Math.toRadians(-50)))
+                            .back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -327,6 +330,8 @@ public class AutoRedCornerRR extends LinearOpMode {
                     currentPose = trajectory.end();
 
                     //drop cone
+                    drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.3);
+                    sleep(300);
                     drive.openClaw();
                     drive.fingerRetract();
                     sleep(300);
@@ -430,15 +435,15 @@ public class AutoRedCornerRR extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.3, 180,28);
+                        drive.newDriveDistance(0.45, 180,33);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.3, 180,5);
+                        drive.newDriveDistance(0.45, 180,5);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 0, 28);
+                        drive.newDriveDistance(0.45, 0, 15);
                     }
 
                     autoState = State.HALT;
