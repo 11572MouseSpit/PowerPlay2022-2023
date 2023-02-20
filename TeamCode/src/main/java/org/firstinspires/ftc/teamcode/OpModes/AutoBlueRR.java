@@ -435,6 +435,7 @@ public class AutoBlueRR extends LinearOpMode {
 
                     if(position == 1) {
                         // drive forward to park position 1
+
                         drive.newDriveDistance(0.45, 180,18);
 
                     } else if (position == 2) {
