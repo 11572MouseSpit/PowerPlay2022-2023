@@ -204,7 +204,7 @@ public class AutoBlueRR extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(36, -39, Math.toRadians(217)))
+                            .lineToLinearHeading(new Pose2d(34, -39, Math.toRadians(217)))
                             //.back(1)
                             .build();
 
@@ -294,7 +294,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .lineTo(new Vector2d(38, -14)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(-135))
                             //correct
-                            .forward(27)
+                            .forward(24)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -320,11 +320,11 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(42, -13, Math.toRadians(235)))
+                            .lineToLinearHeading(new Pose2d(40, -13, Math.toRadians(235)))
                             //.back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
-                            .forward(2)
+                            .forward(1.5)
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
