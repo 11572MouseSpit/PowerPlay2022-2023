@@ -204,7 +204,7 @@ public class AutoBlueRR extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(36, -39, Math.toRadians(225)))
+                            .lineToLinearHeading(new Pose2d(36, -39, Math.toRadians(217)))
                             //.back(1)
                             .build();
 
@@ -224,11 +224,11 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(2)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(41, -15, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(36, -15, Math.toRadians(0)))
 
                             // go for cone 5
 
-                            .forward(24)
+                            .forward(27)
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(200);
@@ -257,7 +257,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(42, -13, Math.toRadians(135)))
+                            .lineToLinearHeading(new Pose2d(38, -13, Math.toRadians(135)))
                             .back(3)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
@@ -294,7 +294,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .lineTo(new Vector2d(38, -14)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(-135))
                             //correct
-                            .forward(29)
+                            .forward(27)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -310,7 +310,7 @@ public class AutoBlueRR extends LinearOpMode {
                             // score mid junction
 
 //                            .back(0.25)
-                            .forward(0.5)
+                            .forward(.5)
 
                             .addDisplacementMarker(() -> {
                                 drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.3);
@@ -320,11 +320,11 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(44, -13, Math.toRadians(235)))
+                            .lineToLinearHeading(new Pose2d(42, -13, Math.toRadians(235)))
                             //.back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
-//                            .forward(6)
+                            .forward(2)
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
@@ -361,8 +361,8 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(3)
 
                             //turn to parking position
-                            .lineToLinearHeading(new Pose2d(38, -12, Math.toRadians(0)))
-
+                            .lineToLinearHeading(new Pose2d(44, -14, Math.toRadians(0)))
+                            .back(6)
                             // leave at the end of the program
                             .build();
 
@@ -432,14 +432,14 @@ public class AutoBlueRR extends LinearOpMode {
                     autoState = State.HALT;
                     break;
                 case PARK:
-
+                    drive.liftPosition(robot.LIFT_RESET, robot.LIFT_POWER_DOWN);
                     if(position == 1) {
                         // drive forward to park position 1
                         drive.newDriveDistance(0.45, 180,18);
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.45, 0,4);
+                        drive.newDriveDistance(0.45, 0,3);
 
                     } else {
                         // drive to park position 3
