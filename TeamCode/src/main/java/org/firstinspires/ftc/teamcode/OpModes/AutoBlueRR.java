@@ -204,7 +204,7 @@ public class AutoBlueRR extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(34, -39, Math.toRadians(217)))
+                            .lineToLinearHeading(new Pose2d(36, -41, Math.toRadians(214)))
                             //.back(1)
                             .build();
 
@@ -257,8 +257,8 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(38, -13, Math.toRadians(135)))
-                            .back(3)
+                            .lineToLinearHeading(new Pose2d(36, -13, Math.toRadians(137)))
+                            .back(6)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -281,6 +281,7 @@ public class AutoBlueRR extends LinearOpMode {
                     sleep(600);
                     drive.liftPosition(robot.LIFT_CONE_4, 0.3);
                     sleep(300);
+//                    drive.newDriveDistance(0.3, 180, 3); // drive forward to land cone
 
                     //CONE 4
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
@@ -294,7 +295,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .lineTo(new Vector2d(38, -14)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(-135))
                             //correct
-                            .forward(24)
+                            .forward(22)
                             .build();
 
 
@@ -321,22 +322,25 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(40, -13, Math.toRadians(235)))
+                            .lineToLinearHeading(new Pose2d(37, -9, Math.toRadians(236.5)))
                             //.back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
-                            .forward(1.5)
+                            .forward(4)
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
 
                     //drop cone
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.3);
-                    sleep(300);
+                    drive.newDriveDistance(0.3, 0, 3);
+                    sleep(600);
                     drive.openClaw();
                     drive.fingerRetract();
                     sleep(300);
                     drive.liftPosition(robot.LIFT_CONE_3, 0.3);
+                    drive.newDriveDistance(0.3, 180, 3);
+                    sleep(500);
 
                     //CONE 3
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
@@ -362,7 +366,7 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(3)
 
                             //turn to parking position
-                            .lineToLinearHeading(new Pose2d(44, -14, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(44, -14, Math.toRadians(-2.5)))
                             .back(6)
                             // leave at the end of the program
                             .build();
@@ -436,7 +440,7 @@ public class AutoBlueRR extends LinearOpMode {
                     drive.liftPosition(robot.LIFT_RESET, robot.LIFT_POWER_DOWN);
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.45, 180,18);
+                        drive.newDriveDistance(0.45, 180,22);
 
                     } else if (position == 2) {
                         // return to starting position
