@@ -198,13 +198,13 @@ public class AutoBlueRR extends LinearOpMode {
                             // .waitSeconds(10)
 
                             .addDisplacementMarker(() -> {
-                                drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
+                                drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.3);
                                 drive.fingerExtend();
                             })
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .lineToLinearHeading(new Pose2d(36, -41, Math.toRadians(214)))
+                            .lineToLinearHeading(new Pose2d(36, -40, Math.toRadians(214)))
                             //.back(1)
                             .build();
 
@@ -216,7 +216,7 @@ public class AutoBlueRR extends LinearOpMode {
                     drive.openClaw();
                     drive.fingerRetract();
                     sleep(400);
-                    drive.liftPosition(robot.LIFT_CONE_5, 0.3);
+                    drive.liftPosition(robot.LIFT_CONE_5, 0.5);
 
                     //CONE 5
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
@@ -224,11 +224,11 @@ public class AutoBlueRR extends LinearOpMode {
                             .back(2)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
-                            .lineToLinearHeading(new Pose2d(36, -15, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(38, -15, Math.toRadians(0)))
 
                             // go for cone 5
 
-                            .forward(27)
+                            .forward(23.5)
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(200);
@@ -243,6 +243,7 @@ public class AutoBlueRR extends LinearOpMode {
                     //GET CONE
                     drive.closeClaw();
                     sleep(400);
+//                    drive.liftPosition(robot.LIFT_HIGH_JUNCTION, 0.4);
 
                     //HIGH JUNCTION
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
@@ -257,8 +258,8 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(36, -13, Math.toRadians(137)))
-                            .back(6)
+                            .lineToLinearHeading(new Pose2d(38, -13, Math.toRadians(136)))
+                            .back(5)
                             // correct error
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -274,14 +275,14 @@ public class AutoBlueRR extends LinearOpMode {
                     drive.liftPosition(robot.LIFT_HIGH_JUNCTION, 0.5);
                     sleep(1000);
                     drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.5);
-                    drive.newDriveDistance(0.3, 0, 3); // drive forward to land cone
-                    sleep(400);
+                    drive.newDriveDistance(0.3, 0, 3.25); // drive forward to land cone
+                    sleep(600);
                     drive.openClaw();
                     drive.fingerRetract();
                     sleep(600);
                     drive.liftPosition(robot.LIFT_CONE_4, 0.3);
                     sleep(300);
-//                    drive.newDriveDistance(0.3, 180, 3); // drive forward to land cone
+                    drive.newDriveDistance(0.3, 180, 3); // drive backward to land cone
 
                     //CONE 4
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
@@ -292,10 +293,10 @@ public class AutoBlueRR extends LinearOpMode {
                             // .turn(Math.toRadians(135))
                             // .forward(25)
 //                            .lineToLinearHeading(new Pose2d(-2 + xOffset, 50 + yOffset, Math.toRadians(180)))
-                            .lineTo(new Vector2d(38, -14)) // robot at -5, 50 (needs to be corrected)
+                            .lineTo(new Vector2d(38, -16)) // robot at -5, 50 (needs to be corrected)
                             .turn(Math.toRadians(-135))
                             //correct
-                            .forward(22)
+                            .forward(23)
                             .build();
 
 
@@ -322,11 +323,11 @@ public class AutoBlueRR extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(37, -9, Math.toRadians(236.5)))
+                            .lineToLinearHeading(new Pose2d(35, -17, Math.toRadians(234)))
                             //.back(1.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
-                            .forward(4)
+                            .back(2.5)
                             .build();
                     rrDrive.followTrajectorySequence(trajectory);
                     currentPose = trajectory.end();
@@ -337,7 +338,7 @@ public class AutoBlueRR extends LinearOpMode {
                     sleep(600);
                     drive.openClaw();
                     drive.fingerRetract();
-                    sleep(300);
+                    sleep(600);
                     drive.liftPosition(robot.LIFT_CONE_3, 0.3);
                     drive.newDriveDistance(0.3, 180, 3);
                     sleep(500);
@@ -345,7 +346,7 @@ public class AutoBlueRR extends LinearOpMode {
                     //CONE 3
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
 
-                            .lineToLinearHeading(new Pose2d(-38, -13, Math.toRadians(-45)))
+                            .lineToLinearHeading(new Pose2d(-42, -13, Math.toRadians(-45)))
                             .turn(Math.toRadians(225))
                             .forward(26)
                             // grab cone
@@ -359,11 +360,11 @@ public class AutoBlueRR extends LinearOpMode {
                     // PARK
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // back up and raise lift
-                            .back(2)
+//                            .back(2)
                             .addDisplacementMarker(() -> {
                                 drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.3);
                             })
-                            .back(3)
+                            .back(0.5)
 
                             //turn to parking position
                             .lineToLinearHeading(new Pose2d(44, -14, Math.toRadians(-2.5)))
@@ -440,15 +441,15 @@ public class AutoBlueRR extends LinearOpMode {
                     drive.liftPosition(robot.LIFT_RESET, robot.LIFT_POWER_DOWN);
                     if(position == 1) {
                         // drive forward to park position 1
-                        drive.newDriveDistance(0.45, 180,22);
+                        drive.newDriveDistance(0.45, 180,24);
 
-                    } else if (position == 2) {
+                    } else if (position == 2) { //trangle
                         // return to starting position
-                        drive.newDriveDistance(0.45, 0,3);
+//                        drive.newDriveDistance(0.45, 180,2.5);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 0, 28);
+                        drive.newDriveDistance(0.45, 0, 30);
                     }
 
                     autoState = State.HALT;
