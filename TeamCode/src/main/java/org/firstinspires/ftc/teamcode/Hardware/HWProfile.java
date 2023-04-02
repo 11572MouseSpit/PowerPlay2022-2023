@@ -53,9 +53,9 @@ public class HWProfile {
     public final int LIFT_MID_JUNCTION = 730;
     public final int LIFT_HIGH_JUNCTION = 1270;
     public final int LIFT_MAX_HEIGHT = 1300;
-    public final int LIFT_CONE_5 = 175;
+    public final int LIFT_CONE_5 = 160;
     public final double CONE_WAIT_TIME = 4;
-    public final int LIFT_CONE_4 = 155;
+    public final int LIFT_CONE_4 = 140;
     public final int LIFT_CONE_3 = 105;
     public final int LIFT_CONE_2 = 60;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
@@ -68,8 +68,8 @@ public class HWProfile {
     public final double CONE_DISTANCE = 5;
     public final double LIFT_kF = 0.7;
     public final double WAIT_DRIVE_TO_CONE = 1;
-    public final double CLAW_OPEN = 0.15;
-    public final double CLAW_CLOSE = 0.4;
+    public final double CLAW_OPEN = 0.2;
+    public final double CLAW_CLOSE = 0.5;
     public final double TURN_SPEED = 0.5;
     public final double TURN_ROTATION = 110;
     public final double DRIVE_TO_CONE_POWER = 0.2;

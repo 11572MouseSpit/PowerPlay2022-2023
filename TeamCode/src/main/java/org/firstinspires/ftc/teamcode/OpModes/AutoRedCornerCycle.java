@@ -202,9 +202,9 @@ public class AutoRedCornerCycle extends LinearOpMode {
 //                            .forward(5)
 //                            .turn(Math.toRadians(-45))
 //                            .forward(1)
-                            .strafeLeft(2)
+                            .strafeLeft(3)
                             .lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(45)))
-                            .back(1)
+//                            .back(1)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -220,7 +220,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
                     //CONE 5
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // drop cone marker
-                            .back(2)
+                            .back(3)
 //                            .turn(Math.toRadians(45))
                             // must always add x and y offsets!
                             .lineToLinearHeading(new Pose2d(-41, -15, Math.toRadians(180)))
@@ -231,7 +231,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(100);
-                                drive.liftPosition(robot.LIFT_CONE_4, 0.3);
+                                drive.liftPosition(robot.LIFT_CONE_5, 0.3);
                                 sleep(100);
                             })
                             .build();
@@ -248,7 +248,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
                             // score mid junction
 
 //                            .back(0.25)
-                            .forward(0.5)
+//                            .forward(0.5)
 
                             .addDisplacementMarker(() -> {
                                 drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.3);
@@ -258,8 +258,8 @@ public class AutoRedCornerCycle extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-36, -16, Math.toRadians(-50)))
-                            .back(1.5)
+                            .lineToLinearHeading(new Pose2d(-35, -17, Math.toRadians(-50)))
+                            .back(2.5)
                             .build();
 
                     rrDrive.followTrajectorySequence(trajectory);
@@ -269,13 +269,13 @@ public class AutoRedCornerCycle extends LinearOpMode {
                     sleep(50);
                     drive.fingerExtend();
                     drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.5);
-                    sleep(500);
+                    sleep(300);
                     drive.liftPosition(robot.LIFT_LOW_JUNCTION, 0.5);
                     drive.newDriveDistance(0.3, 0, 3); // drive forward to land cone
-                    sleep(200);
+                    sleep(100);
                     drive.openClaw();
                     drive.fingerRetract();
-                    sleep(300);
+                    sleep(200);
                     drive.liftPosition(robot.LIFT_CONE_4, 0.3);
                     sleep(200);
 
@@ -289,7 +289,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
 
                             // go for cone 5
 
-                            .lineToLinearHeading(new Pose2d(-62, -15, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-63.5, -15, Math.toRadians(180)))
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(200);
@@ -311,7 +311,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
                             // score mid junction
 
 //                            .back(0.25)
-                            .forward(0.5)
+//                            .forward(0.5)
 
                             .addDisplacementMarker(() -> {
                                 drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.3);
@@ -321,8 +321,8 @@ public class AutoRedCornerCycle extends LinearOpMode {
                             .waitSeconds(0.25)
                             .back(4)
 
-                            .lineToLinearHeading(new Pose2d(-36, -16, Math.toRadians(-50)))
-                            .back(2.5)
+                            .lineToLinearHeading(new Pose2d(-37, -17, Math.toRadians(-50)))
+                            .back(3.5)
                             //correct
                             //.lineTo(new Vector2d(-2 + xOffset, 50 + yOffset))
 //                            .forward(6)
@@ -332,10 +332,10 @@ public class AutoRedCornerCycle extends LinearOpMode {
 
                     //drop cone
                     drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.3);
-                    sleep(300);
+                    sleep(100);
                     drive.openClaw();
                     drive.fingerRetract();
-                    sleep(300);
+                    sleep(100);
                     drive.liftPosition(robot.LIFT_CONE_3, 0.3);
 
                     //CONE 3
@@ -348,7 +348,7 @@ public class AutoRedCornerCycle extends LinearOpMode {
 
                             // go for cone 5
 
-                            .lineToLinearHeading(new Pose2d(-63.5, -15, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-65, -15, Math.toRadians(180)))
                             .addDisplacementMarker(() -> {
                                 drive.openClaw();
                                 sleep(200);
@@ -361,20 +361,19 @@ public class AutoRedCornerCycle extends LinearOpMode {
 
                     //
                     drive.closeClaw();
-                    sleep(300);
+                    sleep(400);
 
                     // PARK
                     trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
                             // back up and raise lift
-                            .back(2)
                             .addDisplacementMarker(() -> {
                                 drive.liftPosition(robot.LIFT_MID_JUNCTION, 0.3);
                             })
-                            .back(3)
+                            .back(5)
 
                             //turn to parking position
-                            .lineToLinearHeading(new Pose2d(-34, -16, Math.toRadians(-45)))
-                            .back(2.5)
+                            .lineToLinearHeading(new Pose2d(-38, -19, Math.toRadians(-45)))
+                            .back(4.5)
 
 
                             // leave at the end of the program
@@ -385,6 +384,20 @@ public class AutoRedCornerCycle extends LinearOpMode {
                     currentPose = trajectory.end();
                     sleep(200);
                     drive.openClaw();
+
+                    trajectory = rrDrive.trajectorySequenceBuilder(currentPose)
+                            // back up and raise lift
+                            .turn(Math.toRadians(45))
+
+
+                            // leave at the end of the program
+                            .build();
+
+
+                    rrDrive.followTrajectorySequence(trajectory);
+                    currentPose = trajectory.end();
+
+
 
                     autoState = State.PARK;
 
@@ -455,11 +468,11 @@ public class AutoRedCornerCycle extends LinearOpMode {
 
                     } else if (position == 2) {
                         // return to starting position
-                        drive.newDriveDistance(0.45, 180,5);
+                        drive.newDriveDistance(0.45, 180,3);
 
                     } else {
                         // drive to park position 3
-                        drive.newDriveDistance(0.45, 0, 15);
+                        drive.newDriveDistance(0.45, 0, 17);
                     }
 
                     autoState = State.HALT;
