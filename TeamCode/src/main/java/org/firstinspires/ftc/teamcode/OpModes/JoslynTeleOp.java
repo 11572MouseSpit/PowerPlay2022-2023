@@ -21,9 +21,9 @@ public class JoslynTeleOp extends LinearOpMode {
         double theta;
         double theta2 = 180;
         double r;
-        double power=.2;
+        double power=1;
         double rightX, rightY;
-        boolean fieldCentric = false;
+        boolean fieldCentric = true;
         int targetPosition = 0;
         LinearOpMode opMode = this;
         double liftPower = robot.LIFT_POWER_DOWN;
@@ -45,7 +45,7 @@ public class JoslynTeleOp extends LinearOpMode {
              ****** Mecanum Drive Control section ******
              *******************************************/
             if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
-                theta = robot.imu.getAbsoluteHeading() + 90;
+                theta = robot.imu.getAbsoluteHeading() ;
 //                        robot.imu.getAngularOrientation().firstAngle + 90;
             } else {
                 theta = 0;      // do not adjust for the angular position of the robot
