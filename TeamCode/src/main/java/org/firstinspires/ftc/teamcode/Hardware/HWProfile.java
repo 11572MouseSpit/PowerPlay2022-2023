@@ -59,8 +59,8 @@ public class HWProfile {
     public final int LIFT_CONE_3 = 105;
     public final int LIFT_CONE_2 = 60;
     public final int LIFT_CONE_1 = 0;       // can use LIFT_RESET instead of this level
-    public final double LIFT_POWER_UP = 0.7;
-    public final double LIFT_POWER_DOWN = 0.35;
+    public final double LIFT_POWER_UP = 1;
+    public final double LIFT_POWER_DOWN = 0.5;
     public final double LIFT_POSITION_TOLERANCE = 10;
     public final double LIFT_kP = 0.005;
     public final double LIFT_kI = 0.005;
