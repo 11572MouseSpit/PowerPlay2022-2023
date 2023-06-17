@@ -29,7 +29,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double TargetRotation = 0;
         double OldRotation = 0;
         boolean rotateEnabled = false;
-        boolean fieldCentric = false;
+        boolean fieldCentric = true;
         int targetPosition = 0;
         LinearOpMode opMode = this;
         double liftPower = robot.LIFT_POWER_DOWN;
@@ -58,11 +58,22 @@ public class MecanumTeleOp extends LinearOpMode {
             /*******************************************
              ****** Mecanum Drive Control section ******
              *******************************************/
+            if (fieldCentric) {             // verify that the user hasn't disabled field centric drive
+                theta = Math.toDegrees(robot.imu.getAbsoluteHeading()) - 90;
+//                        robot.imu.getAngularOrientation().firstAngle + 90;
+            } else {
+                theta = 0;      // do not adjust for the angular position of the robot
+            }
+            robotAngle = Math.atan2(gamepad1.left_stick_y, (-gamepad1.left_stick_x)) - Math.PI / 4;
+            r = Math.hypot(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+
+
             beans.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y*1,
-                            -gamepad1.left_stick_x*1,
+                            -(gamepad1.left_stick_y*Math.cos(Math.toRadians(theta))+gamepad1.left_stick_x*Math.sin(Math.toRadians(theta)))*1,
+                            -(gamepad1.left_stick_x*Math.cos(Math.toRadians(theta))-gamepad1.left_stick_y*Math.sin(Math.toRadians(theta)))*1,
                             -gamepad1.right_stick_x*0.8
+
                     )
             );
 
