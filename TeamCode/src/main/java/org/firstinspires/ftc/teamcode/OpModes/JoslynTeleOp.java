@@ -32,11 +32,15 @@ public class JoslynTeleOp extends LinearOpMode {
         double rightX, rightY;
         double bumpCount = 0;
         boolean clawState = false;
+
         boolean clawReady = false;
         boolean toggleReadyUp = false;
         boolean toggleReadyDown = false;
         boolean fieldCentric = true;
+        double fingerPos = 0;
+        double winchPos = 0;
         int targetPosition = 0;
+        int dronePos = 0;
         LinearOpMode opMode = this;
         double liftPower = robot.LIFT_POWER_DOWN;
         ElapsedTime elapsedTime = new ElapsedTime();
@@ -85,6 +89,7 @@ public class JoslynTeleOp extends LinearOpMode {
             GamepadEx gp1 = new GamepadEx(gamepad1);
             ButtonReader aReader = new ButtonReader(gp1, GamepadKeys.Button.A);
             ButtonReader bReader = new ButtonReader(gp1, GamepadKeys.Button.RIGHT_BUMPER);
+            ButtonReader xReader = new ButtonReader(gp1, GamepadKeys.Button.X);
 
             /*
             robotAngle = Math.atan2(gamepad1.left_stick_y, (-gamepad1.left_stick_x)) - Math.PI / 4;
@@ -118,12 +123,19 @@ public class JoslynTeleOp extends LinearOpMode {
             /*  LIFT CONTROL  */
             if(gp1.isDown(GamepadKeys.Button.B)){
                 bumpCount=0;
-                robot.servoFinger.setPosition(robot.FINGER_IN);
+//                robot.servoFinger.setPosition(robot.FINGER_IN);
                 targetPosition= robot.LIFT_RESET;
             }
             //claw control
             if(aReader.isDown()&&clawReady){
                 clawState=!clawState;
+            } else if(xReader.isDown()) {
+                winchPos += 500;
+
+                robot.winchMotor.setTargetPosition((int) winchPos);
+                robot.winchMotor.setPower(robot.WINCH_POWER);
+
+                sleep(100);
             }
             //forces claw to only open or close if button is pressed once, not held
             if(!aReader.isDown()){
@@ -178,7 +190,7 @@ public class JoslynTeleOp extends LinearOpMode {
 
             if (bumpCount == 0 && (gamepad1.left_bumper || gamepad1.right_bumper)) {
                 targetPosition = robot.LIFT_RESET;
-                robot.servoFinger.setPosition(robot.FINGER_IN);
+//                robot.servoFinger.setPosition(robot.FINGER_IN);
             } else if (bumpCount == 1 && (gamepad1.left_bumper || gamepad1.right_bumper)) {
                 targetPosition = robot.LIFT_LOW_JUNCTION;
             } else if (bumpCount == 2 && (gamepad1.left_bumper || gamepad1.right_bumper)) {
@@ -187,13 +199,38 @@ public class JoslynTeleOp extends LinearOpMode {
                 targetPosition = robot.LIFT_HIGH_JUNCTION;
             }
 
-            if(bumpCount != 0) {
-                robot.servoFinger.setPosition(robot.FINGER_OUT);
-            }
+//            if(bumpCount != 0) {
+//                robot.servoFinger.setPosition(robot.FINGER_OUT);
+//            }
             if(gamepad1.dpad_up) {
-                robot.lamp.setPower(1);
+                fingerPos += .025;
+                drive.setPivot(fingerPos);
             } else if (gamepad1.dpad_down){
-                robot.lamp.setPower(0);
+                fingerPos -= .025;
+                drive.setPivot(fingerPos);
+            } else if(gamepad1.right_stick_button) {
+                //launch drone
+                drive.launchDrone(true);
+                dronePos = 0;
+            } else if(gamepad1.dpad_left) {
+                if(dronePos == 0) {
+                    drive.loadDrone();
+                    dronePos = 1;
+                    sleep(500);
+                } else {
+                    drive.launchDrone(false);
+                    dronePos = 0;
+                    sleep(500);
+                }
+            } else if(gamepad1.left_stick_button) {
+                winchPos -= 500;
+
+                robot.winchMotor.setTargetPosition((int) winchPos);
+                robot.winchMotor.setPower(robot.WINCH_POWER);
+                drive.liftPosition(0, 0
+                );
+
+                sleep(100);
             }
 
 

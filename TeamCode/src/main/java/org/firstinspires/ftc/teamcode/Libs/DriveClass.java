@@ -637,9 +637,31 @@ public class DriveClass {
 //        this.fingerExtend();
     }
 
+    public void launchDrone(boolean launchMode) {
+        if(launchMode == false) {
+            robot.launcherServo.setPosition(0);
+        } else {
+            robot.launcherServo.setPosition(.6);
+        }
+    }
+
+    public void setPivot(double position) {
+        if (position >= .85) {
+            position = .85;
+        } else if (position <= 0) {
+            position = 0;
+        }
+
+        robot.servoFinger.setPosition(position);
+    }
+
+    public void loadDrone() {
+        robot.launcherServo.setPosition(.1);
+    }
+
     public void openClaw(){
         robot.servoGrabber.setPosition(robot.CLAW_OPEN);
-        fingerRetract();
+//        fingerRetract();
     }
 
     public void fingerExtend() { robot.servoFinger.setPosition(robot.FINGER_OUT);}
@@ -649,9 +671,11 @@ public class DriveClass {
     public void liftPosition(int liftPosition, double power) {
         robot.motorRightLift.setTargetPosition(liftPosition);
         robot.motorLeftLift.setTargetPosition(liftPosition);
+//        robot.winchMotor.setTargetPosition(liftPosition);
 
         robot.motorRightLift.setPower(power);
         robot.motorLeftLift.setPower(power);
+//        robot.winchMotor.setPower(robot.WINCH_POWER);
     }
 
     public void resetLift(double power){

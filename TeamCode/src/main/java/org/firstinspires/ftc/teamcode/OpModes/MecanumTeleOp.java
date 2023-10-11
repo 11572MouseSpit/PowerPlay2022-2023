@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Hardware.HWProfile;
 import org.firstinspires.ftc.teamcode.Libs.DriveClass;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "Teleop Mode", group = "Competition")
+@TeleOp(name = "BROKEN TELEOP", group = "Competition")
 
 public class MecanumTeleOp extends LinearOpMode {
     private final static HWProfile robot = new HWProfile();
@@ -179,7 +179,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
             // 90 degree turn
             if(gamepad1.dpad_right) {
-                TargetRotation = robot.TURN_ROTATION;
+//                TargetRotation = robot.TURN_ROTATION;
                 OldRotation = robot.imu.getAbsoluteHeading();
                 rotateEnabled = true;
 
@@ -188,7 +188,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 LRrotatePower = -robot.TURN_SPEED;
                 RRrotatePower = robot.TURN_SPEED;
             } else if(gamepad1.dpad_left) {
-                TargetRotation = -robot.TURN_ROTATION;
+//                TargetRotation = -robot.TURN_ROTATION;
                 OldRotation = robot.imu.getAbsoluteHeading();
                 rotateEnabled = true;
 
