@@ -72,7 +72,7 @@ public class HWProfile {
     public final double LIFT_kF = 0.7;
     public final double WAIT_DRIVE_TO_CONE = 1;
     public final double CLAW_OPEN = 0.45;
-    public final double CLAW_CLOSE = 0.5;
+    public final double CLAW_CLOSE = 0.75;
     public final double TURN_SPEED = 0.5;
     public final double WINCH_POWER = 1;
 
