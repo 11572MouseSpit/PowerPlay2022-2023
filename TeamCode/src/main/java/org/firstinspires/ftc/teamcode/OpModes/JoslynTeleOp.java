@@ -204,6 +204,11 @@ public class JoslynTeleOp extends LinearOpMode {
 //            }
             if(gamepad1.dpad_up) {
                 fingerPos += .025;
+                if (fingerPos >= .85) {
+                    fingerPos = .85;
+                } else if (fingerPos <= 0) {
+                    fingerPos = 0;
+                }
                 drive.setPivot(fingerPos);
             } else if (gamepad1.dpad_down){
                 fingerPos -= .025;
